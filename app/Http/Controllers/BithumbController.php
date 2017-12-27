@@ -21,7 +21,6 @@ class BithumbController extends Controller
                 'secret' => env('API_SECRET_BITHUMB'),
             ]);
 
-            $this->create_sell_order('XRP', 10, 3000);
             $target_coins = explode(',', env('TARGET_COINS'));
             $balances = $this->bithumb->fetch_balance();
 
@@ -46,7 +45,7 @@ class BithumbController extends Controller
                         ]);
 
                         $price = $this->price_list[$coin_type];
-                        $price = $price + ($price * 0.1);
+                        $price = $price * floatval(env('SELL_PRICE_RATE'));
                         $this->create_sell_order($coin_type, $amount, $price);
 
                     }
@@ -57,18 +56,17 @@ class BithumbController extends Controller
             foreach ($balances["free"] as $coin_type => $amount) {
                 if ($coin_type != self::CURRENCY && $amount > $this->get_min_sell_amount($coin_type)) {
                     $price = $this->price_list[$coin_type];
-                    $price = $price + ($price * 0.1);
+                    $price = $price * floatval(env('SELL_PRICE_RATE'));
                     $this->create_sell_order($coin_type, $amount, $price);
                 }
             }
 
-            return view('bithumb', []);
+            return view( 'empty');
 
         } catch (\ccxt\ExchangeError $e) {
             $desc = $this->bithumb->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());
             $response = json_decode($json_exception);
-
             $this->notice_by_line(__CLASS__ . "\n\n" . "{$response->message}");
         }
     }
@@ -76,9 +74,9 @@ class BithumbController extends Controller
     private function create_sell_order ($coin_type, $amount, $price) {
         $symbol = $this->get_symbol($coin_type);
         $amount = $this->get_amount($coin_type, $amount);
-        $this->bithumb->create_limit_sell_order($symbol, floor($amount), floor($price));
-
-//                $bithumb->create_market_sell_order($symbol, $amount);
+        $order = $this->bithumb->create_limit_sell_order($symbol, floor($amount), floor($price));
+        $text = \GuzzleHttp\json_encode($order);
+        $this->notice_by_line($text);
     }
 
     private function get_symbol ($coin_type) {
@@ -101,6 +99,7 @@ class BithumbController extends Controller
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(env('API_KEY_LINE'));
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => env('API_SECRET_LINE')]);
         $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text);
-        $response = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);
+        $res = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);
+        dd($res);
     }
 }
