@@ -17,26 +17,7 @@ class SimulationController extends Controller
     const BTC_KR_API_URL = 'https://api.bithumb.com/public/ticker/';
     const REAL_CURRENCY_CONVERTER = 'http://www.xe.com/currencyconverter/convert/?Amount=1&From=JPY&To=KRW';
 
-    const coin_send_fee_coincheck = [
-        'BTC' => 0.002,
-        'ETH' => 0.01,
-        'ETC' => 0.01,
-        'XMR' => 0.05,
-        'XRP' => 0.15,
-        'LTC' => 0.001,
-        'DASH' => 0.003,
-        'BCH' => 0.001,
-    ];
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
 
     /**
      * Show the application dashboard.
@@ -113,20 +94,20 @@ class SimulationController extends Controller
         return $api_body->data->closing_price;
     }
     /**
-     * 日本から韓国へBTC送金時手数料
+     * 日本から韓国へコイン送金時手数料
      * @param $btc_amount
      * @return float|int
      */
-    private function get_coin_sending_fee_jp_to_kr($btc_amount, $coin_name) {
-        return self::coin_send_fee_coincheck[$coin_name];
+    private function get_coin_sending_fee_jp_to_kr($btc_amount, $coin_type) {
+        return env('COIN_SEND_FEE_COINCHECK_'.$coin_type);
     }
     /**
-     * 韓国から日本へBTC送金時手数料
+     * 韓国から日本へコイン送金時手数料
      * @param $btc_amount
      * @return float|int
      */
-    private function get_coin_sending_fee_kr_to_jp ($btc_amount, $coin_name) {
-        return 0.0004;
+    private function get_coin_sending_fee_kr_to_jp ($btc_amount, $coin_type) {
+        return env('COIN_SEND_FEE_BITHUMB_'.$coin_type);
     }
     /**
      * 日本から韓国へ銀行送金時の手数料

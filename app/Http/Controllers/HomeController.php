@@ -73,7 +73,7 @@ class HomeController extends Controller
         $calc['sell_coin_min'] = $sell_coin_min;
         $calc['final_amount_jp'] = $final_amount_jp;
 
-        return view('test', ['data' => $data, 'calc' => $calc]);
+        return view('home', ['data' => $data, 'calc' => $calc]);
     }
 
     private function getSendFeeCoinCheck($coin_type) {
