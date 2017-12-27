@@ -16,8 +16,6 @@ class GetPrice extends Command
 {
     const BTC_JP_API_URL = 'https://api.bitflyer.jp/v1/getticker';
     const BTC_KR_API_URL = 'https://api.bithumb.com/public/ticker/BTC';
-    const ETH_JP_API_URL = 'https://api.zaif.jp/api/1/last_price/eth_jpy';
-    const ETH_KR_API_URL = 'https://api.bithumb.com/public/ticker/ETH';
     const REAL_CURRENCY_CONVERTER = 'http://www.xe.com/currencyconverter/convert/?Amount=1&From=JPY&To=KRW';
     const NOTIFY_GAP = 200000;
 
