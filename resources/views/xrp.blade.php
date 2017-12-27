@@ -14,7 +14,7 @@
                         <form class="form-horizontal" method="GET" action="{{ route('xrp') }}">
                             {{ csrf_field() }}
                             <div class="form-group{{ $errors->has('send_btc_amount') ? ' has-error' : '' }}">
-                                <label for="email" class="col-md-4 control-label">送るBTC量</label>
+                                <label for="email" class="col-md-4 control-label">送るXRP量</label>
 
                                 <div class="col-md-6">
                                     <input id="send_btc_amount" type="number" step="0.01" class="form-control" name="send_btc_amount" value="{{ old('send_btc_amount') }}" required autofocus>
@@ -38,7 +38,7 @@
                         <table class="table">
                             <tr>
                                 <th>
-                                    1BTCの日本円価格(¥)
+                                    1XRPの日本円価格(¥)
                                 </th>
                                 <td>
                                     {{number_format($jp_price)}}
@@ -46,7 +46,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    1BTCの韓国ウォン価格(W)
+                                    1XRPの韓国ウォン価格(W)
                                 </th>
                                 <td>
                                     {{number_format($kr_price)}}
@@ -54,7 +54,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    1BTC基準円ウォン為替
+                                    1XRP基準円ウォン為替
                                 </th>
                                 <td>
                                     {{number_format($one_jpy_to_btc_to_krw, 5)}}
@@ -70,7 +70,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    送るBTC量
+                                    送るXRP量
                                 </th>
                                 <td>
                                     {{number_format($send_btc_amount, 2)}}
@@ -78,7 +78,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    BTC price jp
+                                    XRP price jp
                                 </th>
                                 <td>
                                     {{number_format($send_btc_price)}}
@@ -87,7 +87,7 @@
                         <!--
                             <tr>
                                 <th>
-                                    日本から韓国へBTC送金手数料(BTC)
+                                    日本から韓国へXRP送金手数料(XRP)
                                 </th>
                                 <td>
                                     {{number_format($btc_fee_jp_to_kr, 4)}}
@@ -95,7 +95,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    日本から韓国へ送られるBTC
+                                    日本から韓国へ送られるXRP
                                 </th>
                                 <td>
                                     {{number_format($real_btc_send_jp_to_kr, 5)}}
@@ -103,7 +103,7 @@
                             </tr>
                             <tr>
                                 <th>
-                                    韓国に送られたBTCの韓国相場(W)
+                                    韓国に送られたXRPの韓国相場(W)
                                 </th>
                                 <td>
                                     {{number_format($estimated_krw)}}
@@ -153,7 +153,7 @@
 
                             <tr>
                                 <th>
-                                    BTC購入額と戻ってくる金額の差分
+                                    XRP購入額と戻ってくる金額の差分
                                 </th>
                                 <td>
                                     {{number_format($gap)}}

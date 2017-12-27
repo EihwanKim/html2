@@ -35,7 +35,6 @@ class XrpController extends Controller
 
         $one_jpy_to_btc_to_krw = $one_coin_price_kr / $one_coin_price_jp ;
         $one_btc_jpy_to_krw_at_real = $one_coin_price_jp * $one_jp_won_at_real;
-        $send_btc_amount = 1;
         $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
         $btc_fee_jp_to_kr = floatval(env('COIN_SEND_FEE_COINCHECK_XRP'));
         $real_btc_send_jp_to_kr = $send_btc_amount - $btc_fee_jp_to_kr;
