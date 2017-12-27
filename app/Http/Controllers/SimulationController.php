@@ -79,7 +79,7 @@ class SimulationController extends Controller
         $data['gap'] = $gap;
         $data['coin_name'] = $coin_name;
 
-        $trail = Trail::all();
+        //$trail = Trail::all();
 
 
         return view('simulation', $data);
