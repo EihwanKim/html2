@@ -15,4 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/chart', 'ChartController@index')->name('chart');
+Route::get('/simulation/{coin_name}', 'SimulationController@index')->name('simulation');
 Route::get('/bithumb', 'BithumbController@index')->name('bithumb');
