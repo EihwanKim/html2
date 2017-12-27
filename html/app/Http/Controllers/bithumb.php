@@ -235,76 +235,40 @@ class bithumb extends Exchange {
         if (!$side)
             throw new ExchangeError ($this->id . ' create_order requires a $side parameter (sell or buy)');
 
+        $this->load_markets();
+        $market = $this->market ($symbol);
+
         $type = strtolower($type);
         $side = strtolower($side);
 
         if ($type == 'limit') {
-            if ($side == 'buy')
-                $response = $this->create_limit_buy_order($symbol, $amount, $price);
-            if ($side == 'sell')
-                $response = $this->create_limit_sell_order($symbol, $amount, $price);
+            $order = array (
+                'order_currency' => $market['id'],
+                'Payment_currency' => $market['quote'],
+                'units' => $amount,
+                'price' => $price,
+            );
+            if ($side == 'buy') {
+                $order['type'] = 'bid';
+                return $this->privatePostTradePlace (array_merge ($order, $params));
+            }
+
+            if ($side == 'sell') {
+                $order['type'] = 'ask';
+                return $this->privatePostTradePlace (array_merge ($order, $params));
+            }
+
         } else if ($type == 'market') {
+            $order = array (
+                'currency' => $market['id'],
+                'units' => $amount, // min = 10
+            );
             if ($side == 'buy')
-                $response = $this->create_market_buy_order($symbol, $amount);
+                return $this->privatePostTradeMarketBuy (array_merge ($order, $params));
+
             if ($side == 'sell')
-                $response = $this->create_market_sell_order($symbol, $amount);
+                return $this->privatePostTradeMarketSell (array_merge ($order, $params));
         }
-        return array (
-            'info' => $response,
-            'id' => $response['order_id'],
-        );
-    }
-
-    public function create_market_buy_order($symbol, $amount, $params = array())
-    {
-        $this->load_markets();
-        $market = $this->market ($symbol);
-        $response = $this->privatePostTradeMarketBuy (array_merge (array (
-            'currency' => $market['id'],
-            'units' => $amount, // min = 10
-        ), $params));
-        return $response;
-    }
-
-    public function create_market_sell_order($symbol, $amount, $params = array())
-    {
-        $this->load_markets();
-        $market = $this->market ($symbol);
-        $response = $this->privatePostTradeMarketSell (array_merge (array (
-            'currency' => $market['id'],
-            'units' => $amount,  // min = 10
-        ), $params));
-        return $response;
-    }
-
-    public function create_limit_buy_order($symbol, $amount, $price, $params = array())
-    {
-        $this->load_markets();
-        $market = $this->market ($symbol);
-        $order = array (
-            'order_currency' => $market['id'],
-            'Payment_currency' => $market['quote'],
-            'units' => $amount,
-            'price' => $price,
-            'type' => 'bid',
-        );
-        $response = $this->privatePostTradePlace (array_merge ($order, $params));
-        return $response;
-    }
-
-    public function create_limit_sell_order($symbol, $amount, $price, $params = array())
-    {
-        $this->load_markets();
-        $market = $this->market ($symbol);
-        $order = array (
-            'order_currency' => $market['id'],
-            'Payment_currency' => $market['quote'],
-            'units' => $amount,
-            'price' => $price,
-            'type' => 'ask',
-        );
-        $response = $this->privatePostTradePlace (array_merge ($order, $params));
-        return $response;
     }
 
     public function fetch_custom_account() {
