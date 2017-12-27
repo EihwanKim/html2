@@ -26,7 +26,6 @@ class Orders extends Migration
             $table->string('fee');
             $table->string('currency');
             $table->datetime('create_at_api');
-            $table->string('order_id');
             $table->timestamps();
         });
     }

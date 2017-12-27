@@ -44,15 +44,17 @@ class XrpController extends Controller
         $bank_fee_kr_to_jp = $this->get_bank_sending_fee_kr_to_jp($estimated_krw);
         $recieve_jp_fee = 4000;
         $bank_fee_kr_to_jp_at_jpy = ($bank_fee_kr_to_jp / $one_jp_won_at_real) + $recieve_jp_fee; //1
-        $final_jpy = $estimated_krw / $one_jp_won_at_real - $bank_fee_kr_to_jp_at_jpy;
-        $gap = $final_jpy -  ($one_coin_price_jp * $send_btc_amount);
+        $final_jpy = ($estimated_krw / $one_jp_won_at_real) - $bank_fee_kr_to_jp_at_jpy;
+        $send_btc_price = $one_coin_price_jp * $send_btc_amount;
+        $gap = $final_jpy - ($send_btc_price);
+        $rate = $gap / $final_jpy *100;
         $data['jp_price'] = $one_coin_price_jp;
         $data['kr_price'] = $one_coin_price_kr;
         $data['one_jpy_to_btc_to_krw'] = floatval($one_jpy_to_btc_to_krw);
         $data['one_jp_won_at_real'] = $one_jp_won_at_real;
         $data['one_btc_jpy_to_krw_at_real'] = $one_btc_jpy_to_krw_at_real;
         $data['send_btc_amount'] = $send_btc_amount;
-        $data['send_btc_price'] = $one_coin_price_kr * $send_btc_amount;
+        $data['send_btc_price'] = $send_btc_price;
         $data['btc_fee_jp_to_kr'] = $btc_fee_jp_to_kr;
         $data['real_btc_send_jp_to_kr'] = $real_btc_send_jp_to_kr;
         $data['estimated_krw'] = $estimated_krw;
@@ -62,6 +64,7 @@ class XrpController extends Controller
         $data['bank_fee_kr_to_jp_at_jpy'] = $bank_fee_kr_to_jp_at_jpy;
         $data['final_jpy'] = $final_jpy;
         $data['gap'] = $gap;
+        $data['rate'] = $rate;
         $trail = new Trail;
         $trail->jp_price=$data['jp_price'];
         $trail->kr_price=$data['kr_price'];
@@ -78,6 +81,7 @@ class XrpController extends Controller
         $trail->bank_fee_kr_to_jp_at_jpy=$data['bank_fee_kr_to_jp_at_jpy'];
         $trail->final_jpy=$data['final_jpy'];
         $trail->gap=$data['gap'];
+        $trail->rate=$data['rate'];
 
 //        $trail->save();
         return view('xrp', $data);

@@ -84,64 +84,6 @@
                                     {{number_format($send_btc_price)}}
                                 </td>
                             </tr>
-                        <!--
-                            <tr>
-                                <th>
-                                    日本から韓国へXRP送金手数料(XRP)
-                                </th>
-                                <td>
-                                    {{number_format($btc_fee_jp_to_kr, 4)}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    日本から韓国へ送られるXRP
-                                </th>
-                                <td>
-                                    {{number_format($real_btc_send_jp_to_kr, 5)}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    韓国に送られたXRPの韓国相場(W)
-                                </th>
-                                <td>
-                                    {{number_format($estimated_krw)}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    上記金額の銀行基準日本円換算(¥)
-                                </th>
-                                <td>
-                                    {{number_format($estimated_jpy)}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    韓国から日本への送金手数料(W)
-                                </th>
-                                <td>
-                                    {{number_format($bank_fee_kr_to_jp)}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    送金受取手数料
-                                </th>
-                                <td>
-                                    {{number_format($recieve_jp_fee)}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>
-                                    韓国から日本への送金手数料総額の円換算(¥)
-                                </th>
-                                <td>
-                                    {{number_format($bank_fee_kr_to_jp_at_jpy)}}
-                                </td>
-                            </tr>
--->
                             <tr>
                                 <th>
                                     最終的に得られる日本円の想定額
@@ -157,6 +99,15 @@
                                 </th>
                                 <td>
                                     {{number_format($gap)}}
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>
+                                    レート
+                                </th>
+                                <td>
+                                    {{number_format($rate, 3)}}
                                 </td>
                             </tr>
                         </table>
