@@ -68,7 +68,7 @@ class BithumbController extends Controller
             $desc = $this->bithumb->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());
             $response = json_decode($json_exception);
-            $this->notice_by_line(__CLASS__ . "\n\n" . "{$response->message}");
+            Utils::send_line(__CLASS__ . "\n\n" . "{$response->message}");
         }
     }
 
@@ -77,7 +77,7 @@ class BithumbController extends Controller
         $amount = $this->get_amount($coin_type, $amount);
         $order = $this->bithumb->create_limit_sell_order($symbol, floor($amount), floor($price));
         $text = \GuzzleHttp\json_encode($order);
-        $this->notice_by_line($text);
+        Utils::send_line($text);
     }
 
     private function get_symbol ($coin_type) {
@@ -89,18 +89,12 @@ class BithumbController extends Controller
 
     private function get_amount($coin_type, $amount) {
         $n = env('FLOOR_'.$coin_type);
-        return floor( $amount * pow( 10 , $n ) ) / pow( 10 , $n ) ;
+        return Utils::floor($amount, $n);
     }
 
     private function get_min_sell_amount($coin_type) {
         return env('MINIMUM_SELLABLE_AMOUNT_'.$coin_type);
     }
 
-    private function notice_by_line($text) {
-        $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(env('API_KEY_LINE'));
-        $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => env('API_SECRET_LINE')]);
-        $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text);
-        $res = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);
-        dd($res);
-    }
+
 }
