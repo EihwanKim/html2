@@ -39,86 +39,6 @@ class GetPrice extends Command
         parent::__construct();
     }
 
-//    /**
-//     * Execute the console command.
-//     *
-//     * @return mixed
-//     */
-//    public function old_handle()
-//    {
-//        //
-//        $client = new Client();
-//        $btc_jp_api_response = $client->request('GET', self::BTC_JP_API_URL);
-//        $btc_kr_api_response = $client->request('GET', self::BTC_KR_API_URL);
-////        $btc_jp_api_response = $client->request('GET', self::ETH_JP_API_URL);
-////        $btc_kr_api_response = $client->request('GET', self::ETH_KR_API_URL);
-//        $crawlerClient = new CrawlerClient();
-//        $crawler = $crawlerClient->request('GET', self::REAL_CURRENCY_CONVERTER);
-//        $one_jp_won_at_real = $crawler->filter('.uccResultAmount')->text();
-//        $one_jp_won_at_real = floatval($one_jp_won_at_real);
-//        $btc_jp_body = json_decode($btc_jp_api_response->getBody());
-//        $btc_kr_body = json_decode($btc_kr_api_response->getBody());
-//        $one_btc_jp_price = $btc_jp_body->best_bid;   //JP BTC
-////        $one_btc_jp_price = $btc_jp_body->last_price;   //JP ETH
-//        $one_btc_kr_price = $this->get_price_from_bithumb_api($btc_kr_body);
-//        $one_jpy_to_btc_to_krw = $one_btc_kr_price / $one_btc_jp_price ;
-//        $one_btc_jpy_to_krw_at_real = $one_btc_jp_price * $one_jp_won_at_real;
-//        $send_btc_amount = 1;
-//        $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
-//        $btc_fee_jp_to_kr = $this->get_btc_sending_fee_jp_to_kr($send_btc_amount);
-//        $real_btc_send_jp_to_kr = $send_btc_amount - $btc_fee_jp_to_kr;
-//        $real_btc_send_jp_to_kr  = $real_btc_send_jp_to_kr  - ($real_btc_send_jp_to_kr  * (0.15 /100)); //BTC
-//        $estimated_krw = $real_btc_send_jp_to_kr * $one_btc_kr_price;
-//        $estimated_jpy = $estimated_krw / $one_jp_won_at_real;
-//        $bank_fee_kr_to_jp = $this->get_bank_sending_fee_kr_to_jp($estimated_krw);
-//        $recieve_jp_fee = 4000;
-//        $bank_fee_kr_to_jp_at_jpy = ($bank_fee_kr_to_jp / $one_jp_won_at_real) + $recieve_jp_fee; //1
-//        $final_jpy = $estimated_krw / $one_jp_won_at_real - $bank_fee_kr_to_jp_at_jpy;
-//        $gap = $final_jpy -  ($one_btc_jp_price * $send_btc_amount);
-//        $data['jp_price'] = $one_btc_jp_price;
-//        $data['kr_price'] = $one_btc_kr_price;
-//        $data['one_jpy_to_btc_to_krw'] = floatval($one_jpy_to_btc_to_krw);
-//        $data['one_jp_won_at_real'] = $one_jp_won_at_real;
-//        $data['one_btc_jpy_to_krw_at_real'] = $one_btc_jpy_to_krw_at_real;
-//        $data['btc_fee_jp_to_kr'] = $btc_fee_jp_to_kr;
-//        $data['real_btc_send_jp_to_kr'] = $real_btc_send_jp_to_kr;
-//        $data['estimated_krw'] = $estimated_krw;
-//        $data['estimated_jpy'] = $estimated_jpy;
-//        $data['bank_fee_kr_to_jp'] = $bank_fee_kr_to_jp;
-//        $data['recieve_jp_fee'] = $recieve_jp_fee;
-//        $data['bank_fee_kr_to_jp_at_jpy'] = $bank_fee_kr_to_jp_at_jpy;
-//        $data['final_jpy'] = $final_jpy;
-//        $data['gap'] = $gap;
-//        $trail = new Trail;
-//        $trail->jp_price=$data['jp_price'];
-//        $trail->kr_price=$data['kr_price'];
-//        $trail->one_jpy_to_btc_to_krw=$data['one_jpy_to_btc_to_krw'];
-//        $trail->one_jp_won_at_real=$data['one_jp_won_at_real'];
-//        $trail->one_btc_jpy_to_krw_at_real=$data['one_btc_jpy_to_krw_at_real'];
-//        $trail->btc_fee_jp_to_kr=$data['btc_fee_jp_to_kr'];
-//        $trail->real_btc_send_jp_to_kr=$data['real_btc_send_jp_to_kr'];
-//        $trail->estimated_krw=$data['estimated_krw'];
-//        $trail->estimated_jpy=$data['estimated_jpy'];
-//        $trail->bank_fee_kr_to_jp=$data['bank_fee_kr_to_jp'];
-//        $trail->recieve_jp_fee=$data['recieve_jp_fee'];
-//        $trail->bank_fee_kr_to_jp_at_jpy=$data['bank_fee_kr_to_jp_at_jpy'];
-//        $trail->final_jpy=$data['final_jpy'];
-//        $trail->gap=$data['gap'];
-//
-//        $trail->save();
-//
-//        $now = new Carbon();
-//        $notified_in_hour = Notified::where('notified', '>', $now->subHour())->first();
-//
-//        if (!isset($notified_in_hour) && $trail->gap > self::NOTIFY_GAP) {
-////            $mailer = new MailgunMailer($trail);
-////            $mailer->build();
-////            Mail::to('cloz2me@gmail.com')->send($mailer);
-////            $notified = new Notified;
-////            $notified->save();
-//        }
-//    }
-
     public function handle() {
         $send_btc_amount = env('TRACKER_AMOUNT_XRP');
 
@@ -185,14 +105,6 @@ class GetPrice extends Command
         $trail->gap=$data['gap'];
         $trail->rate=$data['rate'];
         $trail->save();
-    }
-
-    private function getSendFeeCoinCheck($coin_type) {
-        return env('COIN_SEND_FEE_COINCHECK_'.$coin_type);
-    }
-
-    private function getSendFeeBithumb($coin_type) {
-        return env('COIN_SEND_FEE_BITHUMB_'.$coin_type);
     }
 
     /**

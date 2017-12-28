@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\Utils;
 use Illuminate\Http\Request;
 
 
@@ -19,7 +20,7 @@ class HomeController extends Controller
         $min_price_kr = 0;
         $min_price_jp = 0;
 
-        $target_coins = explode(',', env('TARGET_COINS'));
+        $target_coins = Utils::getMasterCoins();
         foreach ($target_coins as $name) {
             $res_kr_json = exec(' curl https://api.bithumb.com/public/ticker/'.$name);
             $res_kr = json_decode($res_kr_json);

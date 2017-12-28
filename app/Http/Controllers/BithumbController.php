@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\Utils;
 use http\Exception\InvalidArgumentException;
 use Illuminate\Http\Request;
 use ccxt;
@@ -21,7 +22,7 @@ class BithumbController extends Controller
                 'secret' => env('API_SECRET_BITHUMB'),
             ]);
 
-            $target_coins = explode(',', env('TARGET_COINS'));
+            $target_coins = Utils::getMasterCoins();
             $balances = $this->bithumb->fetch_balance();
 
             //価格抽出
@@ -80,7 +81,7 @@ class BithumbController extends Controller
     }
 
     private function get_symbol ($coin_type) {
-        $master_coins = explode(',', env('TARGET_COINS'));
+        $master_coins = Utils::getMasterCoins();
         if (!in_array($coin_type, $master_coins))
             return '';
         return $coin_type . '/' . self::CURRENCY;
