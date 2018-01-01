@@ -7,20 +7,21 @@ use Illuminate\Http\Request;
 
 class LineController extends Controller
 {
+    const SAY = [
+      'こんにチワワ！',
+        'ご飯ください〜',
+        '散歩行きましょう〜',
+        'うんち片付けて〜',
+    ];
     //
     public function index(Request $request) {
 
-        $res = Utils::floor(12345.6789, 2);
-        dd($res);
+        for ($i = 0 ; $i < 20 ; $i++) {
+            sleep(1);
+            $res = Utils::send_line(self::SAY[array_rand(self::SAY)]);
+        }
 
 
-
-
-
-
-
-
-        $res = Utils::send_line('こんにチワワ!!');
         return view('empty');
     }
 

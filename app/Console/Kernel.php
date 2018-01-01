@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
-        Commands\GetPrice::class
+        Commands\GetPrice::class,
+        Commands\Sell::class
     ];
 
     /**
@@ -26,6 +27,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('command:get_price')
+            ->everyMinute();
+        $schedule->command('command:sell')
             ->everyMinute();
     }
 

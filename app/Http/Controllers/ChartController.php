@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Library\Utils;
 use Illuminate\Http\Request;
 use App\Trail;
 use Carbon\Carbon;

@@ -21,3 +21,5 @@ Route::get('/simulation/{coin_name}', 'SimulationController@index')->name('simul
 Route::get('/bithumb', 'BithumbController@index')->name('bithumb');
 Route::get('/xrp', 'XrpController@index')->name('xrp');
 Route::get('/line', 'LineController@index')->name('line');
+
+Route::get('/test', 'TestController@index')->name('test');

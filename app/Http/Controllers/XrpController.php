@@ -27,6 +27,7 @@ class XrpController extends Controller
         $res_jp_json = exec(' curl https://coincheck.com/api/rate/XRP_JPY');
         $res_jp = json_decode($res_jp_json);
         $one_coin_price_jp = $res_jp->rate;
+//        $one_coin_price_jp = 243;
 
         $crawlerClient = new CrawlerClient();
         $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));

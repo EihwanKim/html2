@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Library\Utils;
 use Illuminate\Console\Command;
 use App\Trail;
 use App\Notified;
@@ -27,7 +28,7 @@ class GetPrice extends Command
      *
      * @var string
      */
-    protected $description = 'command to get BTC price and calculate';
+    protected $description = 'command to get XRP price and calculate';
 
     /**
      * Create a new command instance.
@@ -49,6 +50,7 @@ class GetPrice extends Command
         $res_jp_json = exec(' curl https://coincheck.com/api/rate/XRP_JPY');
         $res_jp = json_decode($res_jp_json);
         $one_coin_price_jp = $res_jp->rate;
+        $one_coin_price_jp = $one_coin_price_jp * 1.05;
 
         $crawlerClient = new CrawlerClient();
         $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
@@ -57,7 +59,7 @@ class GetPrice extends Command
 
         $one_jpy_to_btc_to_krw = $one_coin_price_kr / $one_coin_price_jp ;
         $one_btc_jpy_to_krw_at_real = $one_coin_price_jp * $one_jp_won_at_real;
-        $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
+//        $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
         $btc_fee_jp_to_kr = floatval(env('COIN_SEND_FEE_COINCHECK_XRP'));
         $real_btc_send_jp_to_kr = $send_btc_amount - $btc_fee_jp_to_kr;
         $real_btc_send_jp_to_kr  = $real_btc_send_jp_to_kr  - ($real_btc_send_jp_to_kr  * (0.15 /100)); //BTC
@@ -105,6 +107,10 @@ class GetPrice extends Command
         $trail->gap=$data['gap'];
         $trail->rate=$data['rate'];
         $trail->save();
+
+        if ($data['rate'] > 20) {
+            Utils::send_line('XRPの裁定取引チャンス：現在のレート：' . $data['rate'] . '%');
+        }
     }
 
     /**

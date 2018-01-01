@@ -226,6 +226,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Utils' => 'App\Library\Utils',
+        'CoincheckCrawler' => 'App\Library\CoincheckCrawler',
     ],
 
 ];
