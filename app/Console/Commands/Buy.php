@@ -9,6 +9,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use ccxt;
 
 class Buy extends Command
 {
@@ -37,8 +38,26 @@ class Buy extends Command
         parent::__construct();
     }
 
+//    public $coincheck;
+//    public $bitflyer;
+    public $market;
+
     public function handle() {
 
+
+        try {
+            $this->market = new \ccxt\coincheck([
+                'apiKey' => env('API_KEY_COINCHECK'),
+                'secret' => env('API_SECRET_COINCHECK'),
+            ]);
+
+
+        } catch (\ccxt\ExchangeError $e) {
+            $desc = $this->market->describe();
+            $json_exception = str_replace($desc['id'], '',  $e->getMessage());
+            $response = json_decode($json_exception);
+            Utils::send_line(__CLASS__ . "\n\n" . "{$response->message}");
+        }
     }
 
 }

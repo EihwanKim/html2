@@ -41,54 +41,9 @@ class GetPrice extends Command
     }
 
     public function handle() {
-        $send_btc_amount = env('TRACKER_AMOUNT_XRP');
 
-        $res_kr_json = exec(' curl https://api.bithumb.com/public/ticker/XRP');
-        $res_kr = json_decode($res_kr_json);
-        $one_coin_price_kr = $res_kr->data->closing_price;
 
-        $res_jp_json = exec(' curl https://coincheck.com/api/rate/XRP_JPY');
-        $res_jp = json_decode($res_jp_json);
-        $one_coin_price_jp = $res_jp->rate;
-        $one_coin_price_jp = $one_coin_price_jp * 1.05;
-
-        $crawlerClient = new CrawlerClient();
-        $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
-        $one_jp_won_at_real = $crawler->filter('.uccResultAmount')->text();
-        $one_jp_won_at_real = floatval($one_jp_won_at_real);
-
-        $one_jpy_to_btc_to_krw = $one_coin_price_kr / $one_coin_price_jp ;
-        $one_btc_jpy_to_krw_at_real = $one_coin_price_jp * $one_jp_won_at_real;
-//        $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
-        $btc_fee_jp_to_kr = floatval(env('COIN_SEND_FEE_COINCHECK_XRP'));
-        $real_btc_send_jp_to_kr = $send_btc_amount - $btc_fee_jp_to_kr;
-        $real_btc_send_jp_to_kr  = $real_btc_send_jp_to_kr  - ($real_btc_send_jp_to_kr  * (0.15 /100)); //BTC
-        $estimated_krw = $real_btc_send_jp_to_kr * $one_coin_price_kr;
-        $estimated_jpy = $estimated_krw / $one_jp_won_at_real;
-        $bank_fee_kr_to_jp = $this->get_bank_sending_fee_kr_to_jp($estimated_krw);
-        $recieve_jp_fee = 4000;
-        $bank_fee_kr_to_jp_at_jpy = ($bank_fee_kr_to_jp / $one_jp_won_at_real) + $recieve_jp_fee; //1
-        $final_jpy = ($estimated_krw / $one_jp_won_at_real) - $bank_fee_kr_to_jp_at_jpy;
-        $send_btc_price = $one_coin_price_jp * $send_btc_amount;
-        $gap = $final_jpy - ($send_btc_price);
-        $rate = $gap / $final_jpy *100;
-        $data['jp_price'] = $one_coin_price_jp;
-        $data['kr_price'] = $one_coin_price_kr;
-        $data['one_jpy_to_btc_to_krw'] = floatval($one_jpy_to_btc_to_krw);
-        $data['one_jp_won_at_real'] = $one_jp_won_at_real;
-        $data['one_btc_jpy_to_krw_at_real'] = $one_btc_jpy_to_krw_at_real;
-        $data['send_btc_amount'] = $send_btc_amount;
-        $data['send_btc_price'] = $send_btc_price;
-        $data['btc_fee_jp_to_kr'] = $btc_fee_jp_to_kr;
-        $data['real_btc_send_jp_to_kr'] = $real_btc_send_jp_to_kr;
-        $data['estimated_krw'] = $estimated_krw;
-        $data['estimated_jpy'] = $estimated_jpy;
-        $data['bank_fee_kr_to_jp'] = $bank_fee_kr_to_jp;
-        $data['recieve_jp_fee'] = $recieve_jp_fee;
-        $data['bank_fee_kr_to_jp_at_jpy'] = $bank_fee_kr_to_jp_at_jpy;
-        $data['final_jpy'] = $final_jpy;
-        $data['gap'] = $gap;
-        $data['rate'] = $rate;
+        $data =
         $trail = new Trail;
         $trail->jp_price=$data['jp_price'];
         $trail->kr_price=$data['kr_price'];
