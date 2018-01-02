@@ -107,6 +107,10 @@ class Sell extends Command
     private function create_sell_order ($coin_type, $amount, $price) {
         $symbol = $this->get_symbol($coin_type);
         $amount = $this->get_amount($coin_type, $amount);
+
+logger($coin_type . ' ' .$amount . ' ' . $price);
+dd($coin_type . ' ' .$amount . ' ' . $price);
+
         $order = $this->bithumb->create_limit_sell_order($symbol, floor($amount), floor($price));
         $text = \GuzzleHttp\json_encode($order);
         Utils::send_line($text);
