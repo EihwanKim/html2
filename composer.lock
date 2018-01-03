@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "ccxt/ccxt",
-            "version": "1.10.495",
+            "version": "1.10.548",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ccxt/ccxt.git",
-                "reference": "080273301b21a232f5eeffc66f19035745220111"
+                "reference": "b50be19a6d177d60381d3101ef5d9b82528fa559"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ccxt/ccxt/zipball/080273301b21a232f5eeffc66f19035745220111",
-                "reference": "080273301b21a232f5eeffc66f19035745220111",
+                "url": "https://api.github.com/repos/ccxt/ccxt/zipball/b50be19a6d177d60381d3101ef5d9b82528fa559",
+                "reference": "b50be19a6d177d60381d3101ef5d9b82528fa559",
                 "shasum": ""
             },
             "require": {
@@ -254,7 +254,7 @@
                 "zec",
                 "zerocoin"
             ],
-            "time": "2017-12-27T12:11:48+00:00"
+            "time": "2018-01-03T05:24:12+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1482,16 +1482,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.16",
+            "version": "v0.8.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "d4c8eab0683dc056f2ca54ca67f5388527c068b1"
+                "reference": "5069b70e8c4ea492c2b5939b6eddc78bfe41cfec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/d4c8eab0683dc056f2ca54ca67f5388527c068b1",
-                "reference": "d4c8eab0683dc056f2ca54ca67f5388527c068b1",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/5069b70e8c4ea492c2b5939b6eddc78bfe41cfec",
+                "reference": "5069b70e8c4ea492c2b5939b6eddc78bfe41cfec",
                 "shasum": ""
             },
             "require": {
@@ -1550,7 +1550,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-12-10T21:49:27+00:00"
+            "time": "2017-12-28T16:14:16+00:00"
         },
         {
             "name": "ramsey/uuid",

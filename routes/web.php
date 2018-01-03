@@ -23,3 +23,7 @@ Route::get('/xrp', 'XrpController@index')->name('xrp');
 Route::get('/line', 'LineController@index')->name('line');
 
 Route::get('/test', 'TestController@index')->name('test');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

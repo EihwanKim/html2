@@ -2,16 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\CoinMaster;
+use App\Library\MyBithumb;
+use App\Library\MyCoincheck;
 use App\Library\Utils;
-use Illuminate\Console\Command;
 use App\Trail;
-use App\Notified;
-use GuzzleHttp\Client;
 use Goutte\Client as CrawlerClient;
-use GuzzleHttp\Client as GuzzleClient;
-use App\Mail\MailgunMailer;
-use Illuminate\Support\Facades\Mail;
-use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class GetPrice extends Command
 {
@@ -41,48 +38,99 @@ class GetPrice extends Command
     }
 
     public function handle() {
+        try {
 
+            $coin_master = CoinMaster::all()->where('enable', true);
 
-        $data =
-        $trail = new Trail;
-        $trail->jp_price=$data['jp_price'];
-        $trail->kr_price=$data['kr_price'];
-        $trail->one_jpy_to_btc_to_krw=$data['one_jpy_to_btc_to_krw'];
-        $trail->one_jp_won_at_real=$data['one_jp_won_at_real'];
-        $trail->one_btc_jpy_to_krw_at_real=$data['one_btc_jpy_to_krw_at_real'];
-        $trail->send_btc_amount = $send_btc_amount;
-        $trail->btc_fee_jp_to_kr=$data['btc_fee_jp_to_kr'];
-        $trail->real_btc_send_jp_to_kr=$data['real_btc_send_jp_to_kr'];
-        $trail->estimated_krw=$data['estimated_krw'];
-        $trail->estimated_jpy=$data['estimated_jpy'];
-        $trail->bank_fee_kr_to_jp=$data['bank_fee_kr_to_jp'];
-        $trail->recieve_jp_fee=$data['recieve_jp_fee'];
-        $trail->bank_fee_kr_to_jp_at_jpy=$data['bank_fee_kr_to_jp_at_jpy'];
-        $trail->final_jpy=$data['final_jpy'];
-        $trail->gap=$data['gap'];
-        $trail->rate=$data['rate'];
-        $trail->save();
+            $crawlerClient = new CrawlerClient();
+            $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
+            $cash_rate = $crawler->filter('.uccResultAmount')->text();
+            $cash_rate = floatval($cash_rate);
 
-        if ($data['rate'] > 20) {
-            Utils::send_line('XRPの裁定取引チャンス：現在のレート：' . $data['rate'] . '%');
+            foreach ($coin_master as $coin) {
+                $coin_type = $coin->coin_type;
+
+                $coincheck = new MyCoincheck([
+                    'apiKey' => env('API_KEY_COINCHECK'),
+                    'secret' => env('API_SECRET_COINCHECK'),
+                ]);
+                $coincheck_res = $coincheck->get_rate("{$coin_type}_JPY");
+                $jp_price = $coincheck_res['close'];
+
+                $bithumb = new MyBithumb([
+                    'apiKey' => env('API_KEY_BITHUMB'),
+                    'secret' => env('API_SECRET_BITHUMB'),
+                ]);
+                $bithumb_res = $bithumb->fetch_ticker("{$coin_type}/KRW");
+                $kr_price = $bithumb_res['close'];
+
+                $coin_rate = floatval($kr_price / $jp_price);
+                $rate_gap = $coin_rate - $cash_rate;
+
+                $data = $this->get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate);
+
+                $trail = new Trail();
+                $trail->coin_type = $data['coin_type'];
+                $trail->jp_price = $data['jp_price'];
+                $trail->kr_price = $data['kr_price'];
+                $trail->cash_rate = $data['cash_rate'];
+                $trail->buy_amount = $data['buy_amount'];
+                $trail->send_amount = $data['send_amount'];
+                $trail->sell_amount = $data['sell_amount'];
+                $trail->return_krw = $data['return_krw'];
+                $trail->return_jpy_no_fee = $data['return_jpy_no_fee'];
+                $trail->input_jp = $data['input_jp'];
+                $trail->return_jpy = $data['return_jpy'];
+                $trail->gap = $data['gap'];
+                $trail->rate = $data['rate'];
+                $trail->save();
+
+            }
+        } catch (\Exception $e) {
+            logger($e->getTrace());
+            Utils::send_line($e->getMessage());
         }
+
     }
 
-    /**
-     * 韓国から日本へ銀行送金時の手数料
-     * @param $krw_amount
-     * @return float|int
-     */
-    private function get_bank_sending_fee_kr_to_jp($krw_amount) {
-        //TODO 具体的な手数料は調査して実装、戻り値は韓国W
-        $fee = 8000;
-//        if ($krw_amount > 20000000) {
-//            $fee = $krw_amount * 0.0001;
-//        } else if ($krw_amount > 10000000) {
-//            $fee = $krw_amount * 0.0001;
-//        } else {
-//            $fee = $krw_amount * 0.0001;
-//        }
-        return $fee ;
+    public function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate) {
+        $coin = CoinMaster::whereCoinType($coin_type)->first();
+        $buy_amount = $coin->track_amount;
+
+        if ($coin->buy_market_type == 'STORE') {
+            $jp_price = $jp_price + ($jp_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。
+        } else {
+            $buy_amount = $buy_amount - ($buy_amount * ($coin->buy_fee_rate / 100));
+        }
+        $send_amount = $buy_amount - $coin->send_fee;
+        $sell_amount = $send_amount;
+
+        if ($coin->sell_market_type == 'STORE') {
+            $kr_price = $kr_price - ($kr_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。
+        } else {
+            $sell_amount = $sell_amount - ($sell_amount * ($coin->sell_fee_rate / 100));
+        }
+        $return_krw = $sell_amount * $kr_price;
+        $return_jpy_no_fee = $return_krw / $cash_rate;
+        $input_jp = $jp_price * $buy_amount;
+        $return_jpy = $return_jpy_no_fee - (8000 / $cash_rate) - 2480;
+        $gap = $return_jpy - $input_jp;
+        $rate = $gap / $return_jpy * 100;
+
+        $data['coin_type'] = $coin_type;       //STR
+        $data['jp_price'] = $jp_price;          //float
+        $data['kr_price'] = $kr_price;          //float
+        $data['cash_rate'] = $cash_rate;        //float
+        $data['buy_amount'] = $buy_amount;      //float
+        $data['send_amount'] = $send_amount;    //float
+        $data['sell_amount'] = $sell_amount;    //float
+        $data['return_krw'] = $return_krw;      //float
+        $data['return_jpy_no_fee'] = $return_jpy_no_fee;    //float
+        $data['input_jp'] = $input_jp;          //float
+        $data['return_jpy'] = $return_jpy;      //float
+        $data['gap'] = $gap;                    //float
+        $data['rate'] = $rate;                  //float
+        return $data;
     }
+
 }

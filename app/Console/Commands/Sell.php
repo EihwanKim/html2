@@ -8,12 +8,12 @@
 
 namespace App\Console\Commands;
 
+use App\CoinMaster;
+use App\Library\MyBithumb;
+use ccxt\BaseError;
+use ccxt\ExchangeNotAvailable;
 use Illuminate\Console\Command;
-
 use App\Library\Utils;
-use http\Exception\InvalidArgumentException;
-use Illuminate\Http\Request;
-use ccxt;
 
 class Sell extends Command
 {
@@ -49,12 +49,19 @@ class Sell extends Command
     public function handle() {
 
         try  {
-            $this->bithumb = new \ccxt\bithumb([
+
+            $coin_master = CoinMaster::all()->where('enable', true);
+            $target_coins = [];
+            foreach ($coin_master as $coin) {
+                $coin_type = $coin->coin_type;
+                array_push($target_coins, $coin_type);
+            }
+
+            $this->bithumb = new MyBithumb([
                 'apiKey' => env('API_KEY_BITHUMB'),
                 'secret' => env('API_SECRET_BITHUMB'),
             ]);
 
-            $target_coins = Utils::getMasterCoins();
             $balances = $this->bithumb->fetch_balance();
 
             //価格抽出
@@ -66,6 +73,7 @@ class Sell extends Command
 
             //販売注文実施
             foreach ($balances["used"] as $coin_type => $amount) {
+
                 if ($coin_type != self::CURRENCY && $amount > 0) {
                     $symbol = $this->get_symbol($coin_type);
                     $orders = $this->bithumb->fetch_orders($symbol);
@@ -96,7 +104,9 @@ class Sell extends Command
 
             return view( 'empty');
 
-        } catch (\ccxt\ExchangeError $e) {
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+            Utils::send_line($e->getMessage());
             $desc = $this->bithumb->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());
             $response = json_decode($json_exception);
@@ -105,13 +115,10 @@ class Sell extends Command
     }
 
     private function create_sell_order ($coin_type, $amount, $price) {
-        $symbol = $this->get_symbol($coin_type);
+
         $amount = $this->get_amount($coin_type, $amount);
 
-logger($coin_type . ' ' .$amount . ' ' . $price);
-dd($coin_type . ' ' .$amount . ' ' . $price);
-
-        $order = $this->bithumb->create_limit_sell_order($symbol, floor($amount), floor($price));
+        $order = $this->bithumb->create_order($this->get_symbol($coin_type), 'limit', 'sell', $amount, $price);
         $text = \GuzzleHttp\json_encode($order);
         Utils::send_line($text);
     }
@@ -124,11 +131,21 @@ dd($coin_type . ' ' .$amount . ' ' . $price);
     }
 
     private function get_amount($coin_type, $amount) {
-        $n = env('FLOOR_'.$coin_type);
-        return Utils::floor($amount, $n);
+        $coin_type = strtoupper($coin_type);
+        $n = CoinMaster::whereCoinType($coin_type)->first();
+        if ($n) {
+            return Utils::floor($amount, $n->decimal_number);
+        }
+        return 0;
     }
 
     private function get_min_sell_amount($coin_type) {
-        return env('MINIMUM_SELLABLE_AMOUNT_'.$coin_type);
+        $coin_type = strtoupper($coin_type);
+        $n = CoinMaster::whereCoinType($coin_type)->first();
+        if ($n) {
+            return $n->sell_minimun_amount;
+        }
+        return 99999999;
+
     }
 }

@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\CoinMaster;
+use App\Library\MyBithumb;
+use App\Library\MyCoincheck;
 use App\Library\Utils;
+use App\Trail;
 use Illuminate\Http\Request;
 use App\Library\CoincheckCrawler;
+use Goutte\Client as CrawlerClient;
+use ccxt;
 
 class TestController extends Controller
 {
     //
     public function index(Request $request) {
 
-        $data = Utils::getExchangeSimulation('btc');
-        var_dump($data);
-        $data = Utils::getMarketSimulation('xrp');
-        var_dump($data);
 
-//        $crawler = new CoincheckCrawler();
-//        echo $crawler->getPrice('xrp');
-//        return view('empty');
+
     }
+
+
 }

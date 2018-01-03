@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class CoinMasterSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,8 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//        $this->call(UserSeeder::class);
-//        $this->call(CoinMasterSeeder::class);
         //
         DB::table('coin_master')->insert([
             'coin_type' => 'BTC',
@@ -53,11 +51,6 @@ class DatabaseSeeder extends Seeder
             'sell_fee_rate' => 0.15,
             'send_fee' => 0.15,
         ]);
-        //
-        DB::table('users')->insert([
-            'name' => 'eihwan',
-            'email' => 'cloz2me@gmail.com',
-            'password' => bcrypt(env('USER_PASSWORD', 'secret')),
-        ]);
+
     }
 }

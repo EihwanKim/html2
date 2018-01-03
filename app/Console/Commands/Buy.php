@@ -8,8 +8,9 @@
 
 namespace App\Console\Commands;
 
+use App\Library\MyCoincheck;
 use Illuminate\Console\Command;
-use ccxt;
+
 
 class Buy extends Command
 {
@@ -40,20 +41,27 @@ class Buy extends Command
 
 //    public $coincheck;
 //    public $bitflyer;
-    public $market;
+    public $coincheck;
 
     public function handle() {
 
 
+
         try {
-            $this->market = new \ccxt\coincheck([
+            $coin_master = CoinMaster::all()->where('enable', true);
+
+            foreach ($coin_master as $coin) {
+
+            }
+
+            $this->coincheck = new MyCoincheck([
                 'apiKey' => env('API_KEY_COINCHECK'),
                 'secret' => env('API_SECRET_COINCHECK'),
             ]);
 
 
-        } catch (\ccxt\ExchangeError $e) {
-            $desc = $this->market->describe();
+        } catch (Exception $e) {
+            $desc = $this->coincheck->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());
             $response = json_decode($json_exception);
             Utils::send_line(__CLASS__ . "\n\n" . "{$response->message}");
