@@ -32,7 +32,7 @@ class Buy extends Command
      *
      * @var string
      */
-    protected $description = 'command to buy XRP';
+    protected $description = 'command to buy COIN';
 
     /**
      * Create a new command instance.
@@ -83,7 +83,6 @@ class Buy extends Command
             }
 
         } catch (\Exception $e) {
-
             Utils::send_line(__CLASS__ , $e);
             $desc = $this->coincheck->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());

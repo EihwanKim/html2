@@ -25,7 +25,7 @@ class GetPrice extends Command
      *
      * @var string
      */
-    protected $description = 'command to get XRP price and calculate';
+    protected $description = 'command to get COIN price';
 
     /**
      * Create a new command instance.

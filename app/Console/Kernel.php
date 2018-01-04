@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         //
         Commands\GetPrice::class,
         Commands\Buy::class,
+        Commands\Send::class,
         Commands\Sell::class,
 
     ];
@@ -31,6 +32,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('command:get_price')
             ->everyMinute();
         $schedule->command('command:buy')
+            ->everyMinute();
+        $schedule->command('command:send')
             ->everyMinute();
         $schedule->command('command:sell')
             ->everyMinute();

@@ -30,4 +30,11 @@ class MyCoincheck extends coincheck
     public function get_orders() {
         return $this->privateGetExchangeOrdersOpens();
     }
+
+    public function send_coin ($address, $amount, $params = null) {
+        return $this->privatePostSendMoney(array_merge([
+            'address' => $address,
+            'amount' => $amount,
+        ], $params));
+    }
 }

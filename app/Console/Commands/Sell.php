@@ -32,7 +32,7 @@ class Sell extends Command
      *
      * @var string
      */
-    protected $description = 'command to sell XRP';
+    protected $description = 'command to sell COIN';
 
     /**
      * Create a new command instance.
@@ -54,11 +54,6 @@ class Sell extends Command
         try  {
 
             $coin_master = CoinMaster::all()->where('enable', true);
-            $target_coins = [];
-            foreach ($coin_master as $coin) {
-                $coin_type = $coin->coin_type;
-                array_push($target_coins, $coin_type);
-            }
 
             $this->bithumb = new MyBithumb([
                 'apiKey' => env('API_KEY_BITHUMB'),
@@ -97,10 +92,7 @@ class Sell extends Command
                 }
             }
 
-            return view( 'empty');
-
         } catch (\Exception $e) {
-            echo $e->getMessage();
             Utils::send_line(__CLASS__ , $e);
             $desc = $this->bithumb->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());
