@@ -133,11 +133,13 @@ class Utils
     }
 
 
-    public static function send_line($text) {
+    public static function send_line($text, $e = null) {
 
         $date = Carbon::now();
-        //TODO 通知しない時間を避けて通知
 
+        if ($e != null) {
+            $text = $text . "\n{$e->getFile()} ({$e->getLine()}) \n{$e->getMessage()}" ;
+        }
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(env('API_KEY_LINE'));
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => env('API_SECRET_LINE')]);
         $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text);

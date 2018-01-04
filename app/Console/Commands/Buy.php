@@ -8,8 +8,13 @@
 
 namespace App\Console\Commands;
 
+use App\Configs;
+use App\Library\MyBitflyer;
 use App\Library\MyCoincheck;
+use App\Trail;
 use Illuminate\Console\Command;
+use App\CoinMaster;
+use App\Library\Utils;
 
 
 class Buy extends Command
@@ -42,30 +47,66 @@ class Buy extends Command
 //    public $coincheck;
 //    public $bitflyer;
     public $coincheck;
+    public $bitflyer;
 
     public function handle() {
 
-
+        logger('Buy START'. date('Y-m-d H:i:s'));
 
         try {
             $coin_master = CoinMaster::all()->where('enable', true);
-
-            foreach ($coin_master as $coin) {
-
-            }
 
             $this->coincheck = new MyCoincheck([
                 'apiKey' => env('API_KEY_COINCHECK'),
                 'secret' => env('API_SECRET_COINCHECK'),
             ]);
 
+            //古い注文はすべて削除
+            $data = $this->coincheck->get_orders();
+            foreach ($data['orders'] as $order) {
+                sleep(1);
+                $this->coincheck->cancel_order($order['id']);
+            }
 
-        } catch (Exception $e) {
+            sleep(1);
+            $balances = $this->coincheck->fetch_balance();
+
+            foreach ($coin_master as $coin) {
+                $trail = Trail::whereCoinType($coin->coin_type)->orderBy('id', 'desc')->first();
+                $buy_rate = Configs::whereName('buy_rate')->first();
+                $balances['free'] = array_reverse($balances["free"]);
+                foreach ($balances["free"] as $coin_type => $amount) {
+                    if ($coin_type != 'JPY' && floatval($trail->rate) > floatval($buy_rate->value)) {
+                        $this->create_buy_order($coin_type, $coin->buy_market_type, $coin->track_amount, $trail->jp_price, $trail->rate);
+                    }
+                }
+            }
+
+        } catch (\Exception $e) {
+
+            Utils::send_line(__CLASS__ , $e);
             $desc = $this->coincheck->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());
             $response = json_decode($json_exception);
-            Utils::send_line(__CLASS__ . "\n\n" . "{$response->message}");
+            if ($response) {
+                Utils::send_line(__CLASS__ . "\n\n" . "{$response->message}");
+            }
         }
     }
 
+    private function create_buy_order ($coin_type, $market_type, $amount, $price, $trail_rate = null) {
+
+        if ($market_type == 'STORE') {
+            Utils::send_line(__CLASS__ . "\n" . "チャンス到来！\n現在のレートは{$trail_rate}です!!");
+        } else {
+            sleep(1);
+            $config = Configs::whereName('buy_price_rate')->first();
+            $buy_price_rate = $config->value;
+            $price = floor($price * $buy_price_rate);
+            $order = $this->coincheck->create_order("{$coin_type}/JPY", "limit", "buy", $amount, $price);
+            $text = \GuzzleHttp\json_encode($order);
+            Utils::send_line(__CLASS__ . "\n" . $text);
+            return $order;
+        }
+    }
 }

@@ -39,6 +39,7 @@ class GetPrice extends Command
 
     public function handle() {
         try {
+            logger('GetPrice START'. date('Y-m-d H:i:s'));
 
             $coin_master = CoinMaster::all()->where('enable', true);
 
@@ -87,10 +88,8 @@ class GetPrice extends Command
 
             }
         } catch (\Exception $e) {
-            logger($e->getTrace());
-            Utils::send_line($e->getMessage());
+            Utils::send_line(__CLASS__ , $e);
         }
-
     }
 
     public function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate) {

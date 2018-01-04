@@ -13,7 +13,11 @@ class DatabaseSeeder extends Seeder
     {
 //        $this->call(UserSeeder::class);
 //        $this->call(CoinMasterSeeder::class);
+//        $this->call(Configs::class);
+
         //
+
+        DB::table('coin_master')->truncate();
         DB::table('coin_master')->insert([
             'coin_type' => 'BTC',
             'enable' => true,
@@ -53,11 +57,28 @@ class DatabaseSeeder extends Seeder
             'sell_fee_rate' => 0.15,
             'send_fee' => 0.15,
         ]);
+
         //
+        DB::table('users')->truncate();
         DB::table('users')->insert([
             'name' => 'eihwan',
             'email' => 'cloz2me@gmail.com',
             'password' => bcrypt(env('USER_PASSWORD', 'secret')),
+        ]);
+
+        //
+        DB::table('configs')->truncate();
+        DB::table('configs')->insert([
+            'name' => 'buy_rate',
+            'value' => '10',
+        ]);
+        DB::table('configs')->insert([
+            'name' => 'buy_price_rate',
+            'value' => '0.5',
+        ]);
+        DB::table('configs')->insert([
+            'name' => 'sell_price_rate',
+            'value' => '2',
         ]);
     }
 }

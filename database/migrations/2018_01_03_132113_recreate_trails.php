@@ -42,6 +42,6 @@ class RecreateTrails extends Migration
     public function down()
     {
         //
-        Schema::drop('trails');
+        Schema::dropIfExists('trails');
     }
 }
