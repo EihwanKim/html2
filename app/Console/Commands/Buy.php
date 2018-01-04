@@ -77,7 +77,11 @@ class Buy extends Command
                 $balances['free'] = array_reverse($balances["free"]);
                 foreach ($balances["free"] as $coin_type => $amount) {
                     if ($coin_type != 'JPY' && floatval($trail->rate) > floatval($buy_rate->value)) {
-                        $this->create_buy_order($coin_type, $coin->buy_market_type, $coin->track_amount, $trail->jp_price, $trail->rate);
+                        $market_type = $coin->buy_market_type;
+//                        $amount = $coin->track_amount;
+                        $amount = floatval($coin->buy_minimum_amount);
+                        $price = $trail->jp_price;
+                        $this->create_buy_order($coin_type, $market_type, $amount, $price, $trail->rate);
                     }
                 }
             }
@@ -98,6 +102,7 @@ class Buy extends Command
         if ($market_type == 'STORE') {
             Utils::send_line(__CLASS__ . "\n" . "チャンス到来！\n現在のレートは{$trail_rate}です!!");
         } else {
+
             sleep(1);
             $config = Configs::whereName('buy_price_rate')->first();
             $buy_price_rate = $config->value;
