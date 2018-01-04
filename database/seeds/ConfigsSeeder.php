@@ -15,15 +15,19 @@ class ConfigsSeeder extends Seeder
         DB::table('configs')->truncate();
         DB::table('configs')->insert([
             'name' => 'buy_rate',
-            'value' => '14',
+            'value' => '15',
         ]);
         DB::table('configs')->insert([
             'name' => 'buy_price_rate',
-            'value' => '1',
+            'value' => '0.998',
         ]);
         DB::table('configs')->insert([
             'name' => 'sell_price_rate',
             'value' => '1',
+        ]);
+        DB::table('configs')->insert([
+            'name' => 'buy_when_jpy_is_over',
+            'value' => '100000',
         ]);
 
     }

@@ -39,14 +39,14 @@ class GetPrice extends Command
 
     public function handle() {
         try {
-            logger('GetPrice START'. date('Y-m-d H:i:s'));
+            logger('GetPrice '. date('Y-m-d H:i:s'));
 
             $coin_master = CoinMaster::all()->where('enable', true);
 
             $crawlerClient = new CrawlerClient();
             $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
-            $cash_rate = $crawler->filter('.uccResultAmount')->text();
-            $cash_rate = floatval($cash_rate);
+            $cash_rate = $crawler->filter('.newest')->text();
+            $cash_rate = floatval(substr($cash_rate, 0, 8));
 
             foreach ($coin_master as $coin) {
                 $coin_type = $coin->coin_type;

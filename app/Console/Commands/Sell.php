@@ -49,7 +49,7 @@ class Sell extends Command
 
     public function handle() {
 
-        logger('Sell START'. date('Y-m-d H:i:s'));
+        logger('Sell     '. date('Y-m-d H:i:s'));
 
         try  {
 
@@ -105,8 +105,7 @@ class Sell extends Command
 
     private function create_sell_order ($coin_type, $amount, $price) {
         $amount = $this->get_amount($coin_type, $amount);
-        $config = Configs::whereName('sell_price_rate')->first();
-        $sell_price_rate = $config->value;
+        $sell_price_rate = Configs::whereName('sell_price_rate')->first()->value;
         $price = $price * $sell_price_rate;
         $order = $this->bithumb->create_order($this->get_symbol($coin_type), 'limit', 'sell', $amount, $price);
         $text = \GuzzleHttp\json_encode($order);

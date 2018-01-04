@@ -38,4 +38,10 @@ class MyCoincheck extends coincheck
         ];
         return $this->privatePostSendMoney(array_merge($order, $params));
     }
+
+    public function fetch_balance($params = array())
+    {
+        sleep(1);
+        return parent::fetch_balance($params);
+    }
 }

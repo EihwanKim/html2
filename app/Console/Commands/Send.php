@@ -50,11 +50,9 @@ class Send extends Command
 
     public function handle() {
 
-        logger('Send START'. date('Y-m-d H:i:s'));
+        logger('Send     '. date('Y-m-d H:i:s'));
 
         try  {
-
-            $coin_master = CoinMaster::all()->where('enable', true);
 
             $this->coincheck = new MyCoincheck([
                 'apiKey' => env('API_KEY_COINCHECK'),

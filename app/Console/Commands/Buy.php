@@ -51,7 +51,7 @@ class Buy extends Command
 
     public function handle() {
 
-        logger('Buy START'. date('Y-m-d H:i:s'));
+        logger('Buy      '. date('Y-m-d H:i:s'));
 
         try {
             $coin_master = CoinMaster::all()->where('enable', true);
@@ -68,23 +68,27 @@ class Buy extends Command
                 $this->coincheck->cancel_order($order['id']);
             }
 
-            sleep(1);
             $balances = $this->coincheck->fetch_balance();
 
-            foreach ($coin_master as $coin) {
-                $trail = Trail::whereCoinType($coin->coin_type)->orderBy('id', 'desc')->first();
-                $buy_rate = Configs::whereName('buy_rate')->first();
-                $balances['free'] = array_reverse($balances["free"]);
-                foreach ($balances["free"] as $coin_type => $amount) {
-                    if ($coin_type != 'JPY' && floatval($trail->rate) > floatval($buy_rate->value)) {
-                        $market_type = $coin->buy_market_type;
+            if ($balances['free']['JPY'] > Configs::whereName('buy_when_jpy_is_over')->first()->value) {
+                foreach ($coin_master as $coin) {
+                    $trail = Trail::whereCoinType($coin->coin_type)->orderBy('id', 'desc')->first();
+                    $balances['free'] = array_reverse($balances["free"]);
+                    foreach ($balances["free"] as $coin_type => $amount) {
+                        if ($coin_type != 'JPY' &&
+                            floatval($trail->rate) > floatval(Configs::whereName('buy_rate')->first()->value) &&
+                            true
+                        ) {
+                            $market_type = $coin->buy_market_type;
 //                        $amount = $coin->track_amount;
-                        $amount = floatval($coin->buy_minimum_amount);
-                        $price = $trail->jp_price;
-                        $this->create_buy_order($coin_type, $market_type, $amount, $price, $trail->rate);
+                            $amount = floatval($coin->buy_minimum_amount);
+                            $price = $trail->jp_price;
+                            $this->create_buy_order($coin_type, $market_type, $amount, $price, $trail->rate);
+                        }
                     }
                 }
             }
+
 
         } catch (\Exception $e) {
             Utils::send_line(__CLASS__ , $e);
@@ -104,8 +108,7 @@ class Buy extends Command
         } else {
 
             sleep(1);
-            $config = Configs::whereName('buy_price_rate')->first();
-            $buy_price_rate = $config->value;
+            $buy_price_rate = Configs::whereName('buy_price_rate')->first()->value;
             $price = floor($price * $buy_price_rate);
             $order = $this->coincheck->create_order("{$coin_type}/JPY", "limit", "buy", $amount, $price);
             $text = \GuzzleHttp\json_encode($order);
