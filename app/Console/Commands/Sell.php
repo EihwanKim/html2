@@ -53,8 +53,6 @@ class Sell extends Command
 
         try  {
 
-            $coin_master = CoinMaster::all()->where('enable', true);
-
             $this->bithumb = new MyBithumb([
                 'apiKey' => env('API_KEY_BITHUMB'),
                 'secret' => env('API_SECRET_BITHUMB'),

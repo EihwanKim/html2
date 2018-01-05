@@ -15,6 +15,7 @@ class CoinMasterSeeder extends Seeder
         DB::table('coin_master')->insert([
             'coin_type' => 'BTC',
             'enable' => true,
+            'buy_flag' => true,
             'buy_market_type' => 'EXCHANGE',
             'sell_market_type' => 'EXCHANGE',
             'track_amount' => 0.1,
@@ -29,7 +30,8 @@ class CoinMasterSeeder extends Seeder
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'XRP',
-            'enable' => false,
+            'enable' => true,
+            'buy_flag' => false,
             'buy_market_type' => 'STORE',
             'sell_market_type' => 'EXCHANGE',
             'track_amount' => 1000,
@@ -44,7 +46,8 @@ class CoinMasterSeeder extends Seeder
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'ETH',
-            'enable' => false,
+            'enable' => true,
+            'buy_flag' => false,
             'buy_market_type' => 'STORE',
             'sell_market_type' => 'EXCHANGE',
             'track_amount' => 0.1,

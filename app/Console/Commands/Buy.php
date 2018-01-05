@@ -54,7 +54,7 @@ class Buy extends Command
         logger('Buy      '. date('Y-m-d H:i:s'));
 
         try {
-            $coin_master = CoinMaster::all()->where('enable', true);
+            $coin_master = CoinMaster::all()->where('writable', true);
 
             $this->coincheck = new MyCoincheck([
                 'apiKey' => env('API_KEY_COINCHECK'),
