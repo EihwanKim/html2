@@ -32,19 +32,22 @@
         //		function newTimestamp(days) {
         //			return moment().add(days, 'd').unix();
         //		}
-        console.log({{$times}});
         var color = Chart.helpers.color;
         var config = {
             type: 'line',
             data: {
                 labels: {{$times}},
-                datasets: [{
-                    label: "Kimch Premium Chart",
-                    backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-                    borderColor: window.chartColors.red,
-                    fill: false,
-                    data: {{$margins}},
-                }]
+                datasets: [
+                @foreach ($margins as $key => $value)
+                    {
+                        label: '{{$key}}',
+                        backgroundColor: color(window.chartColors.{{$color[$key]}}).rgbString(),
+                        borderColor: window.chartColors.{{$color[$key]}},
+                        fill: false,
+                        data: {{$value}},
+                    },
+                @endforeach
+                ]
             },
             options: {
                 elements:{

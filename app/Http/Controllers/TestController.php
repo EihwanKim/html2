@@ -19,20 +19,7 @@ class TestController extends Controller
     public function index(Request $request) {
 
         try {
-            $this->coincheck = new MyCoincheck([
-                'apiKey' => env('API_KEY_COINCHECK'),
-                'secret' => env('API_SECRET_COINCHECK'),
-            ]);
-
-            $coin_master = CoinMaster::all()->where('enable', true);
-
-            foreach ($coin_master as $coin) {
-
-            }
-
-
-
-
+            Utils::send_line('aaa');
         } catch (\Exception $e) {
             $desc = $this->coincheck->describe();
             $json_exception = str_replace($desc['id'], '',  $e->getMessage());

@@ -25,6 +25,7 @@ class CoinMasterSeeder extends Seeder
             'buy_fee_rate' => 0.15,
             'sell_fee_rate' => 0.15,
             'send_fee' => 0.002,
+            'color' => 'red',
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'XRP',
@@ -39,6 +40,7 @@ class CoinMasterSeeder extends Seeder
             'buy_fee_rate' => 0.15,
             'sell_fee_rate' => 0.15,
             'send_fee' => 0.15,
+            'color' => 'blue',
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'ETH',
@@ -53,6 +55,7 @@ class CoinMasterSeeder extends Seeder
             'buy_fee_rate' => 0.15,
             'sell_fee_rate' => 0.15,
             'send_fee' => 0.15,
+            'color' => 'green',
         ]);
 
     }
