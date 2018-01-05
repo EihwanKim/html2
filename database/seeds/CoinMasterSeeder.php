@@ -46,11 +46,11 @@ class CoinMasterSeeder extends Seeder
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'ETH',
-            'enable' => true,
+            'enable' => false,
             'buy_flag' => false,
             'buy_market_type' => 'STORE',
             'sell_market_type' => 'EXCHANGE',
-            'track_amount' => 0.1,
+            'track_amount' => 1,
             'decimal_number' => 2,
             'buy_minimum_amount' => 0.01,
             'send_minimum_amount' => 0.1,
