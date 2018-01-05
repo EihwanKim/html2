@@ -39,7 +39,6 @@ class Kernel extends ConsoleKernel
             $schedule->command('command:sell')
                 ->everyMinute();
         }
-
     }
 
     /**
