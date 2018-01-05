@@ -31,12 +31,15 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('command:get_price')
             ->everyMinute();
-        $schedule->command('command:buy')
-            ->everyMinute();
-        $schedule->command('command:send')
-            ->everyMinute();
-        $schedule->command('command:sell')
-            ->everyMinute();
+        if (env('APP_ENV') == 'production') {
+            $schedule->command('command:buy')
+                ->everyMinute();
+            $schedule->command('command:send')
+                ->everyMinute();
+            $schedule->command('command:sell')
+                ->everyMinute();
+        }
+
     }
 
     /**
