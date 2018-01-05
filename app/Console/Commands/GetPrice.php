@@ -41,7 +41,7 @@ class GetPrice extends Command
         try {
             logger('GetPrice '. date('Y-m-d H:i:s'));
 
-            $coin_master = CoinMaster::all()->where('readable', true);
+            $coin_master = CoinMaster::all()->where('enable', true);
 
             $crawlerClient = new CrawlerClient();
             $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
