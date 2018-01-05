@@ -113,10 +113,6 @@ class Sell extends Command
     }
 
     private function get_symbol ($coin_type) {
-//        $coin_master = CoinMaster::all()->where('enable', true);
-//        $coin_master = $coin_master->toArray();
-//        if (!in_array($coin_type, $coin_master))
-//            throw new Exception('faild to get symbol. coin_type:'. $coin_type);
         return $coin_type . '/' . self::CURRENCY;
     }
 
