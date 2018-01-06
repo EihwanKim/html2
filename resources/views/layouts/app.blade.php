@@ -65,6 +65,9 @@
 
                                 <ul class="dropdown-menu" role="menu">
                                     <li>
+                                        <a href="{{route('home')}}">Home</a>
+                                    </li>
+                                    <li>
                                         <a href="{{route('setting')}}">Setting</a>
                                     </li>
                                     <li>
