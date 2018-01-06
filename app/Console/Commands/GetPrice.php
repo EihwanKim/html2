@@ -65,24 +65,13 @@ class GetPrice extends Command
                 $bithumb_res = $bithumb->fetch_ticker("{$coin_type}/KRW");
                 $kr_price = $bithumb_res['close'];
 
-                $coin_rate = floatval($kr_price / $jp_price);
-                $rate_gap = $coin_rate - $cash_rate;
-
-                $data = $this->get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate);
+                $data = Utils::get_simulation_result($coin_type, $jp_price, $kr_price, $cash_rate);
 
                 $trail = new Trail();
                 $trail->coin_type = $data['coin_type'];
                 $trail->jp_price = $data['jp_price'];
                 $trail->kr_price = $data['kr_price'];
                 $trail->cash_rate = $data['cash_rate'];
-                $trail->buy_amount = $data['buy_amount'];
-                $trail->send_amount = $data['send_amount'];
-                $trail->sell_amount = $data['sell_amount'];
-                $trail->return_krw = $data['return_krw'];
-                $trail->return_jpy_no_fee = $data['return_jpy_no_fee'];
-                $trail->input_jp = $data['input_jp'];
-                $trail->return_jpy = $data['return_jpy'];
-                $trail->gap = $data['gap'];
                 $trail->rate = $data['rate'];
                 $trail->save();
 

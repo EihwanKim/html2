@@ -25,7 +25,7 @@ class CoinMasterSeeder extends Seeder
             'sell_minimum_amount' => 0.01,
             'buy_fee_rate' => 0.15,
             'sell_fee_rate' => 0.15,
-            'send_fee' => 0.002,
+            'send_fee' => 0.001,
             'color' => 'red',
         ]);
         DB::table('coin_master')->insert([
@@ -46,7 +46,7 @@ class CoinMasterSeeder extends Seeder
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'ETH',
-            'enable' => false,
+            'enable' => true,
             'buy_flag' => false,
             'buy_market_type' => 'STORE',
             'sell_market_type' => 'EXCHANGE',
@@ -57,7 +57,7 @@ class CoinMasterSeeder extends Seeder
             'sell_minimum_amount' => 0.01,
             'buy_fee_rate' => 0.15,
             'sell_fee_rate' => 0.15,
-            'send_fee' => 0.15,
+            'send_fee' => 0.01,
             'color' => 'green',
         ]);
 

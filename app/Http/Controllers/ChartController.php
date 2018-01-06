@@ -11,10 +11,21 @@ use Carbon\Carbon;
 class ChartController extends Controller
 {
 
-    //
-    public function index() {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
-        $coin_master = CoinMaster::all()->where('enable', true);
+    //
+    public function index(Request $request, $coin_type = null) {
+
+
+        if ($coin_type) {
+            $coin_master = CoinMaster::all()->where('coin_type', $coin_type);
+        } else {
+            $coin_master = CoinMaster::all()->where('enable', true);
+        }
+
         $data = [];
         foreach ($coin_master as $coin) {
             $trails = Trail::all()->where('coin_type', $coin->coin_type);

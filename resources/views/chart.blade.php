@@ -64,7 +64,7 @@
                         time: {
                             format: timeFormat,
                             // round: 'day'
-                            tooltipFormat: 'll HH:mm'
+                            tooltipFormat: 'HH:mm'
                         },
                         scaleLabel: {
                             display: true,

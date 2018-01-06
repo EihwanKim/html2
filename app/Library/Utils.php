@@ -2,133 +2,51 @@
 // app/Library/BaseClass.php
 namespace App\Library;
 
+use App\CoinMaster;
 use Carbon\Carbon;
 use Goutte\Client as CrawlerClient;
 
 class Utils
 {
 
+    public static function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate) {
 
+        $coin = CoinMaster::whereCoinType($coin_type)->first();
+        $buy_amount = $coin->track_amount;
 
-    public static function getMasterCoins() {
-        return explode(',', env('TARGET_COINS'));
-    }
+        if ($coin->buy_market_type == 'STORE') {
+            $jp_price = $jp_price + ($jp_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。
+        } else {
+            $buy_amount = $buy_amount - ($buy_amount * ($coin->buy_fee_rate / 100));
+        }
+        $send_amount = $buy_amount - $coin->send_fee;
+        $sell_amount = $send_amount;
 
-    public static function getExchangeSimulation ($coin_type) {
+        if ($coin->sell_market_type == 'STORE') {
+            $kr_price = $kr_price - ($kr_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。
+        } else {
+            $sell_amount = $sell_amount - ($sell_amount * ($coin->sell_fee_rate / 100));
+        }
+        $return_krw = $sell_amount * $kr_price;
+        $return_jpy_no_fee = $return_krw / $cash_rate;
+        $input_jp = $jp_price * $buy_amount;
+        $return_jpy = $return_jpy_no_fee - (8000 / $cash_rate) - 2480;
+        $gap = $return_jpy - $input_jp;
+        $rate = $gap / $return_jpy * 100;
 
-        $coin_type = strtoupper($coin_type);
-
-        $send_btc_amount = env('TRACKER_AMOUNT_' . $coin_type);
-
-        $res_kr_json = exec(" curl https://api.bithumb.com/public/ticker/{$coin_type}");
-        $res_kr = json_decode($res_kr_json);
-        $one_coin_price_kr = $res_kr->data->closing_price;
-
-        $res_jp_json = exec(" curl https://coincheck.com/api/rate/{$coin_type}_JPY");
-        $res_jp = json_decode($res_jp_json);
-        $one_coin_price_jp = $res_jp->rate;
-//        $one_coin_price_jp = $one_coin_price_jp * 1.05;
-
-        $crawlerClient = new CrawlerClient();
-        $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
-        $one_jp_won_at_real = $crawler->filter('.uccResultAmount')->text();
-        $one_jp_won_at_real = floatval($one_jp_won_at_real);
-
-        unset($crawlerClient, $crawler);
-
-        $one_jpy_to_btc_to_krw = $one_coin_price_kr / $one_coin_price_jp ;
-        $one_btc_jpy_to_krw_at_real = $one_coin_price_jp * $one_jp_won_at_real;
-        $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
-        $btc_fee_jp_to_kr = floatval(env("COIN_SEND_FEE_COINCHECK_{$coin_type}"));
-        $real_btc_send_jp_to_kr = $send_btc_amount - $btc_fee_jp_to_kr;
-        $real_btc_send_jp_to_kr  = $real_btc_send_jp_to_kr  - ($real_btc_send_jp_to_kr  * (0.15 /100)); //BTC
-        $estimated_krw = $real_btc_send_jp_to_kr * $one_coin_price_kr;
-        $estimated_jpy = $estimated_krw / $one_jp_won_at_real;
-        $bank_fee_kr_to_jp = 8000;
-        $recieve_jp_fee = 4000;
-        $bank_fee_kr_to_jp_at_jpy = ($bank_fee_kr_to_jp / $one_jp_won_at_real) + $recieve_jp_fee; //1
-        $final_jpy = ($estimated_krw / $one_jp_won_at_real) - $bank_fee_kr_to_jp_at_jpy;
-        $send_btc_price = $one_coin_price_jp * $send_btc_amount;
-        $gap = $final_jpy - ($send_btc_price);
-        $rate = $gap / $final_jpy *100;
-        $data['coin_type'] = $coin_type;
-        $data['jp_price'] = $one_coin_price_jp;
-        $data['kr_price'] = $one_coin_price_kr;
-        $data['one_jpy_to_btc_to_krw'] = floatval($one_jpy_to_btc_to_krw);
-        $data['one_jp_won_at_real'] = $one_jp_won_at_real;
-        $data['one_btc_jpy_to_krw_at_real'] = $one_btc_jpy_to_krw_at_real;
-        $data['send_btc_amount'] = $send_btc_amount;
-        $data['send_btc_price'] = $send_btc_price;
-        $data['btc_fee_jp_to_kr'] = $btc_fee_jp_to_kr;
-        $data['real_btc_send_jp_to_kr'] = $real_btc_send_jp_to_kr;
-        $data['estimated_krw'] = $estimated_krw;
-        $data['estimated_jpy'] = $estimated_jpy;
-        $data['bank_fee_kr_to_jp'] = $bank_fee_kr_to_jp;
-        $data['recieve_jp_fee'] = $recieve_jp_fee;
-        $data['bank_fee_kr_to_jp_at_jpy'] = $bank_fee_kr_to_jp_at_jpy;
-        $data['final_jpy'] = $final_jpy;
-        $data['gap'] = $gap;
-        $data['rate'] = $rate;
-
-        return $data;
-    }
-
-    public static function getMarketSimulation ($coin_type) {
-
-        $coin_type = strtoupper($coin_type);
-
-        $send_btc_amount = env('TRACKER_AMOUNT_' . $coin_type);
-
-        $res_kr_json = exec(" curl https://api.bithumb.com/public/ticker/{$coin_type}");
-        $res_kr = json_decode($res_kr_json);
-        $one_coin_price_kr = $res_kr->data->closing_price;
-
-        $res_jp_json = exec(" curl https://coincheck.com/api/rate/{$coin_type}_JPY");
-        $res_jp = json_decode($res_jp_json);
-        $one_coin_price_jp = $res_jp->rate;
-        $one_coin_price_jp = $one_coin_price_jp * 1.05;
-
-        $crawlerClient = new CrawlerClient();
-        $crawler = $crawlerClient->request('GET', env('REAL_CURRENCY_CONVERTER_URL'));
-        $one_jp_won_at_real = $crawler->filter('.uccResultAmount')->text();
-        $one_jp_won_at_real = floatval($one_jp_won_at_real);
-
-        unset($crawlerClient, $crawler);
-
-        $one_jpy_to_btc_to_krw = $one_coin_price_kr / $one_coin_price_jp ;
-        $one_btc_jpy_to_krw_at_real = $one_coin_price_jp * $one_jp_won_at_real;
-//        $send_btc_amount = $send_btc_amount - ($send_btc_amount * (0.15 /100)); //BTC
-        $btc_fee_jp_to_kr = floatval(env("COIN_SEND_FEE_COINCHECK_{$coin_type}"));
-        $real_btc_send_jp_to_kr = $send_btc_amount - $btc_fee_jp_to_kr;
-        $real_btc_send_jp_to_kr  = $real_btc_send_jp_to_kr  - ($real_btc_send_jp_to_kr  * (0.15 /100)); //BTC
-        $estimated_krw = $real_btc_send_jp_to_kr * $one_coin_price_kr;
-        $estimated_jpy = $estimated_krw / $one_jp_won_at_real;
-        $bank_fee_kr_to_jp = 8000;
-        $recieve_jp_fee = 4000;
-        $bank_fee_kr_to_jp_at_jpy = ($bank_fee_kr_to_jp / $one_jp_won_at_real) + $recieve_jp_fee; //1
-        $final_jpy = ($estimated_krw / $one_jp_won_at_real) - $bank_fee_kr_to_jp_at_jpy;
-        $send_btc_price = $one_coin_price_jp * $send_btc_amount;
-        $gap = $final_jpy - ($send_btc_price);
-        $rate = $gap / $final_jpy *100;
-        $data['coin_type'] = $coin_type;
-        $data['jp_price'] = $one_coin_price_jp;
-        $data['kr_price'] = $one_coin_price_kr;
-        $data['one_jpy_to_btc_to_krw'] = floatval($one_jpy_to_btc_to_krw);
-        $data['one_jp_won_at_real'] = $one_jp_won_at_real;
-        $data['one_btc_jpy_to_krw_at_real'] = $one_btc_jpy_to_krw_at_real;
-        $data['send_btc_amount'] = $send_btc_amount;
-        $data['send_btc_price'] = $send_btc_price;
-        $data['btc_fee_jp_to_kr'] = $btc_fee_jp_to_kr;
-        $data['real_btc_send_jp_to_kr'] = $real_btc_send_jp_to_kr;
-        $data['estimated_krw'] = $estimated_krw;
-        $data['estimated_jpy'] = $estimated_jpy;
-        $data['bank_fee_kr_to_jp'] = $bank_fee_kr_to_jp;
-        $data['recieve_jp_fee'] = $recieve_jp_fee;
-        $data['bank_fee_kr_to_jp_at_jpy'] = $bank_fee_kr_to_jp_at_jpy;
-        $data['final_jpy'] = $final_jpy;
-        $data['gap'] = $gap;
-        $data['rate'] = $rate;
-
+        $data['coin_type'] = $coin_type;       //STR
+        $data['jp_price'] = $jp_price;          //float
+        $data['kr_price'] = $kr_price;          //float
+        $data['cash_rate'] = $cash_rate;        //float
+        $data['buy_amount'] = $buy_amount;      //float
+        $data['send_amount'] = $send_amount;    //float
+        $data['sell_amount'] = $sell_amount;    //float
+        $data['return_krw'] = $return_krw;      //float
+        $data['return_jpy_no_fee'] = $return_jpy_no_fee;    //float
+        $data['input_jp'] = $input_jp;          //float
+        $data['return_jpy'] = $return_jpy;      //float
+        $data['gap'] = $gap;                    //float
+        $data['rate'] = $rate;                  //float
         return $data;
     }
 
