@@ -12,11 +12,19 @@
                     @foreach($data as $key => $value)
                             <tr>
                                 <th>
-                                    <a href="{{route('chart')}}/{{$value['coin_type']}}">
-                                        {{$value['coin_type']}}
-                                    </a>
+                                    {{$value['coin_type']}}
                                 </th>
                                 <td>{{number_format($value['rate'], 4)}}</td>
+                                <td>
+                                    <a href="{{route('chart')}}/{{$value['coin_type']}}">
+                                        Chart
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{route('simulation',$value['coin_type'])}}">
+                                        Simulation
+                                    </a>
+                                </td>
                             </tr>
                     @endforeach
                     </table>

@@ -9,10 +9,13 @@ use Goutte\Client as CrawlerClient;
 class Utils
 {
 
-    public static function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate) {
+    public static function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate, $buy_amount = null) {
 
         $coin = CoinMaster::whereCoinType($coin_type)->first();
-        $buy_amount = $coin->track_amount;
+
+        if (!$buy_amount) {
+            $buy_amount = $coin->track_amount;
+        }
 
         if ($coin->buy_market_type == 'STORE') {
             $jp_price = $jp_price + ($jp_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。

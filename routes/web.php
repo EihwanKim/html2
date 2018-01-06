@@ -17,6 +17,9 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/chart', 'ChartController@index')->name('chart');
 Route::get('/chart/{coin_type}', 'ChartController@index');
+
+Route::get('/simulation/{coin_type}', 'SimulationController@index')->name('simulation');
+
 Route::get('/setting', 'SettingController@index')->name('setting');
 
 Route::get('/setting/config', 'SettingController@config_form')->name('setting_config_form');
@@ -29,7 +32,6 @@ Route::get('/test', 'TestController@index')->name('test');
 
 
 
-Route::get('/simulation/{coin_name}', 'SimulationController@index')->name('simulation');
 Route::get('/bithumb', 'BithumbController@index')->name('bithumb');
 Route::get('/xrp', 'XrpController@index')->name('xrp');
 Route::get('/line', 'LineController@index')->name('line');

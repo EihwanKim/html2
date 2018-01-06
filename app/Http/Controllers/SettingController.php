@@ -26,7 +26,7 @@ class SettingController extends Controller
 
     public function config_form(Request $request) {
         $configs = Configs::all();
-        return view('config/config_form', compact('configs'));
+        return view('config/common_form', compact('configs'));
     }
 
     public function config_submit(Request $request) {
@@ -49,6 +49,8 @@ class SettingController extends Controller
 
     public function coin_form(Request $request, $type) {
 
+        $coin = CoinMaster::whereCoinType($type)->first();
+        return view('config/coin_form', compact('coin'));
     }
 
     public function coin_submit(Request $request, $type) {
