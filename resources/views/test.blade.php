@@ -65,7 +65,7 @@
                             unit : 'second',
                             format: timeFormat,
                             // round: 'day'
-                            tooltipFormat: 'h:mm a'
+                            tooltipFormat: 'll h:mm a'
                         },
                         scaleLabel: {
                             display: true,

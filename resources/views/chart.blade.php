@@ -62,9 +62,9 @@
                     xAxes: [{
                         type: "time",
                         time: {
+                            unit : 'second',
                             format: timeFormat,
-                            // round: 'day'
-                            tooltipFormat: 'HH:mm'
+                            tooltipFormat: 'll h:mm a'
                         },
                         scaleLabel: {
                             display: true,
