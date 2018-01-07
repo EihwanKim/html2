@@ -68,6 +68,9 @@
                                         <a href="{{route('home')}}">Home</a>
                                     </li>
                                     <li>
+                                        <a href="{{route('chart')}}">Chart</a>
+                                    </li>
+                                    <li>
                                         <a href="{{route('setting')}}">Setting</a>
                                     </li>
                                     <li>
