@@ -32,7 +32,7 @@ class ChartController extends Controller
             $time = [];
             $margin = [];
             foreach ($trails as $val) {
-                array_push($time, Carbon::createFromFormat('Y-m-d H:i:s', $val->created_at)->timestamp);
+                array_push($time, Carbon::createFromFormat('Y-m-d H:i:s', $val->created_at)->timestamp * 1000);
                 array_push($margin, floatval($val->rate));
             }
             $data['times'] = json_encode($time);
