@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CoinMaster;
 use App\Configs;
 use Illuminate\Http\Request;
+use Symfony\Component\DomCrawler\Form;
 
 class SettingController extends Controller
 {
