@@ -57,4 +57,13 @@ class MyBithumb extends bithumb
                 return $this->privatePostTradeMarketSell (array_merge ($order, $params));
         }
     }
+
+    public function withdraw_krw($back_code, $bank_account, $amount) {
+        $order = [
+            'bank' => $back_code,
+            'account' => $bank_account,
+            'price' => $amount
+        ];
+        return $this->privatePostTradeKrwWithdrawal ($order);
+    }
 }

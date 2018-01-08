@@ -4,7 +4,6 @@ namespace App\Library;
 
 use App\CoinMaster;
 use Carbon\Carbon;
-use Goutte\Client as CrawlerClient;
 
 class Utils
 {
@@ -14,7 +13,9 @@ class Utils
         $coin = CoinMaster::whereCoinType($coin_type)->first();
 
         if (!$buy_amount) {
-            $buy_amount = $coin->track_amount;
+
+        } else {
+
         }
 
         if ($coin->buy_market_type == 'STORE') {
@@ -58,13 +59,21 @@ class Utils
 
         $date = Carbon::now();
 
+
         if ($e != null) {
             $text = $text . "\n{$e->getFile()} ({$e->getLine()}) \n{$e->getMessage()}" ;
         }
         $httpClient = new \LINE\LINEBot\HTTPClient\CurlHTTPClient(env('API_KEY_LINE'));
         $bot = new \LINE\LINEBot($httpClient, ['channelSecret' => env('API_SECRET_LINE')]);
         $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder($text);
-        $response = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);
+
+        $no_notify_from = Configs::whereName('no_notify_from')->first()->value;
+        $no_notify_to = Configs::whereName('no_notify_to')->first()->value;
+
+        if (!($date->hour > $no_notify_from || $date->hour < $no_notify_to)) {
+            $response = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);
+        }
+
         unset($httpClient, $bot, $textMessageBuilder);
         return $response;
     }

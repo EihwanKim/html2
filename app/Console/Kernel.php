@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         Commands\Buy::class,
         Commands\Send::class,
         Commands\Sell::class,
+        Commands\Withdraw::class,
 
     ];
 
@@ -38,6 +39,8 @@ class Kernel extends ConsoleKernel
                 ->everyMinute();
             $schedule->command('command:sell')
                 ->everyMinute();
+            $schedule->command('command:withdraw')
+                ->hourly();
         }
     }
 
