@@ -3,7 +3,9 @@
 namespace App\Library;
 
 use App\CoinMaster;
+use App\Logs;
 use Carbon\Carbon;
+use App\Configs;
 
 class Utils
 {
@@ -63,6 +65,11 @@ class Utils
 
         $no_notify_from = Configs::whereName('no_notify_from')->first()->value;
         $no_notify_to = Configs::whereName('no_notify_to')->first()->value;
+
+        $log = new Logs();
+        $log->type = '';
+        $log->content = $text;
+        $log->save();
 
         if (!($date->hour > $no_notify_from || $date->hour < $no_notify_to)) {
             $response = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);

@@ -44,8 +44,6 @@ class Buy extends Command
         parent::__construct();
     }
 
-//    public $coincheck;
-//    public $bitflyer;
     public $coincheck;
     public $bitflyer;
 

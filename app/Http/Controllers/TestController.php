@@ -21,6 +21,6 @@ class TestController extends Controller
     //
     public function index(Request $request)
     {
-
+        Utils::send_line('test');
     }
 }
