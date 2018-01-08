@@ -8,15 +8,9 @@ use Carbon\Carbon;
 class Utils
 {
 
-    public static function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate, $buy_amount = null) {
+    public static function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate, $buy_amount) {
 
         $coin = CoinMaster::whereCoinType($coin_type)->first();
-
-        if (!$buy_amount) {
-
-        } else {
-
-        }
 
         if ($coin->buy_market_type == 'STORE') {
             $jp_price = $jp_price + ($jp_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。

@@ -32,7 +32,7 @@ class HomeController extends Controller
         $data = [];
         foreach ($coin_master as $coin ) {
             $trail = Trail::whereCoinType($coin->coin_type)->orderBy('id', 'desc')->first();
-            $data[$coin->coin_type] = Utils::get_simulation_result($trail->coin_type, $trail->jp_price, $trail->kr_price, $trail->cash_rate);
+            $data[$coin->coin_type] = Utils::get_simulation_result($trail->coin_type, $trail->jp_price, $trail->kr_price, $trail->cash_rate, $coin->track_amount);
         }
         return view ('home', compact('data'));
 

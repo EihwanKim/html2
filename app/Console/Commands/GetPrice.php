@@ -65,7 +65,7 @@ class GetPrice extends Command
                 $bithumb_res = $bithumb->fetch_ticker("{$coin_type}/KRW");
                 $kr_price = $bithumb_res['close'];
 
-                $data = Utils::get_simulation_result($coin_type, $jp_price, $kr_price, $cash_rate);
+                $data = Utils::get_simulation_result($coin_type, $jp_price, $kr_price, $cash_rate, $coin->track_amount);
 
                 $trail = new Trail();
                 $trail->coin_type = $data['coin_type'];
