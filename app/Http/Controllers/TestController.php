@@ -17,10 +17,15 @@ use App\Configs;
 
 class TestController extends Controller
 {
-    public $coincheck;
+
     //
     public function index(Request $request)
     {
-        Utils::send_line('test');
+        $bithumb = new MyBithumb([
+            'apiKey' => env('API_KEY_BITHUMB'),
+            'secret' => env('API_SECRET_BITHUMB'),
+        ]);
+        $res = $bithumb->fetch_balance();
+        dd($res);
     }
 }

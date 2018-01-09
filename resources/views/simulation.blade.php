@@ -22,7 +22,7 @@
                                 <label for="amount" class="col-md-4 control-label">送るCOIN 量</label>
 
                                 <div class="col-md-6">
-                                    <input id="amount" type="number" step="0.01" class="form-control" name="amount" value="{{ (old('amount'))? old('amount') : $data['buy_amount'] }}" required autofocus>
+                                    <input id="amount" type="text" class="form-control" name="amount" value="{{ (old('amount'))? old('amount') : $data['buy_amount'] }}" required autofocus>
 
                                     @if ($errors->has('amount'))
                                         <span class="help-block">

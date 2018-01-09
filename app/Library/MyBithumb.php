@@ -66,4 +66,8 @@ class MyBithumb extends bithumb
         ];
         return $this->privatePostTradeKrwWithdrawal ($order);
     }
+
+    public function get_profile () {
+        return $this->privatePostInfoAccount();
+    }
 }

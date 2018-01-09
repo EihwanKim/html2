@@ -41,6 +41,8 @@
                 @foreach ($margins as $key => $value)
                     {
                         label: '{{$key}}',
+                        borderWidth: 1,
+                        pointRadius: 0,
                         backgroundColor: color(window.chartColors.{{$color[$key]}}).rgbString(),
                         borderColor: window.chartColors.{{$color[$key]}},
                         fill: false,
