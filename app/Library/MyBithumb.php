@@ -67,7 +67,10 @@ class MyBithumb extends bithumb
         return $this->privatePostTradeKrwWithdrawal ($order);
     }
 
-    public function get_wallet_info ($coin_type) {
-        return $this->privatePostInfoWalletAddress(['currency' => $coin_type]);
+    public function get_wallet_info ($coin_type, $params = array ()) {
+        $order = [
+            'currency' => $coin_type
+        ];
+        return $this->privatePostInfoWalletAddress(array_merge ($order, $params));
     }
 }
