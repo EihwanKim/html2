@@ -37,11 +37,11 @@ class SimulationController extends Controller
 
         $amount = $request->input('amount');
         if (!$amount) {
-            $master = CoinMaster::whereCoinType($coin_type)->orderBy('id', 'desc')->first();
+            $master = CoinMaster::whereCoinType($coin_type)->first();
             $amount = $master->send_minimum_amount;
         }
 
-        $trail = Trail::whereCoinType($coin_type)->first();
+        $trail = Trail::whereCoinType($coin_type)->orderBy('id', 'desc')->first();
         $data = Utils::get_simulation_result($trail->coin_type, $trail->jp_price, $trail->kr_price, $trail->cash_rate, $amount);
         return view('simulation', compact('data'));
     }
