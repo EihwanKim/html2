@@ -138,7 +138,7 @@ class CoinMasterSeeder extends Seeder
             'buy_fee_rate' => 0.15,
             'sell_fee_rate' => 0.15,
             'send_fee' => 0.001,
-            'color' => 'green',
+            'color' => 'pink',
         ]);
         DB::table('coin_master')->insert([
             'coin_type' => 'ETC',
