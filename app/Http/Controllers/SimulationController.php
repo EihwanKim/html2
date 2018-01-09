@@ -37,7 +37,7 @@ class SimulationController extends Controller
 
         $amount = $request->input('amount');
         if (!$amount) {
-            $master = CoinMaster::whereCoinType($coin_type)->first();
+            $master = CoinMaster::whereCoinType($coin_type)->orderBy('id', 'desc')->first();
             $amount = $master->send_minimum_amount;
         }
 
