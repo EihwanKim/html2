@@ -25,7 +25,7 @@ class TestController extends Controller
             'apiKey' => env('API_KEY_BITHUMB'),
             'secret' => env('API_SECRET_BITHUMB'),
         ]);
-        $res = $bithumb->fetch_balance();
-        dd($res);
+        $res = $bithumb->get_wallet_info('BTC');
+
     }
 }
