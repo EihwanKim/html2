@@ -58,6 +58,13 @@ class MyBithumb extends bithumb
         }
     }
 
+    public function fetch_orders ($coin_type, $params = array ()) {
+        $order = [
+            'currency' => $coin_type
+        ];
+        return $this->privatePostInfoOrders(array_merge ($order, $params));
+    }
+
     public function withdraw_krw($back_code, $bank_account, $amount) {
         $order = [
             'bank' => $back_code,
