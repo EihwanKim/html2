@@ -80,45 +80,4 @@ class GetPrice extends Command
             Utils::send_line(__CLASS__ , $e);
         }
     }
-
-    public function get_simulation_result ($coin_type, $jp_price, $kr_price, $cash_rate) {
-        $coin = CoinMaster::whereCoinType($coin_type)->first();
-        $buy_amount = $coin->track_amount;
-
-        if ($coin->buy_market_type == 'STORE') {
-            $jp_price = $jp_price + ($jp_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。
-        } else {
-            $buy_amount = $buy_amount - ($buy_amount * ($coin->buy_fee_rate / 100));
-        }
-        $send_amount = $buy_amount - $coin->send_fee;
-        $sell_amount = $send_amount;
-
-        if ($coin->sell_market_type == 'STORE') {
-            $kr_price = $kr_price - ($kr_price * 0.03);   //TODO できれば実際のスプレッドを取得したい。
-        } else {
-            $sell_amount = $sell_amount - ($sell_amount * ($coin->sell_fee_rate / 100));
-        }
-        $return_krw = $sell_amount * $kr_price;
-        $return_jpy_no_fee = $return_krw / $cash_rate;
-        $input_jp = $jp_price * $buy_amount;
-        $return_jpy = $return_jpy_no_fee - (8000 / $cash_rate) - 2480;
-        $gap = $return_jpy - $input_jp;
-        $rate = $gap / $return_jpy * 100;
-
-        $data['coin_type'] = $coin_type;       //STR
-        $data['jp_price'] = $jp_price;          //float
-        $data['kr_price'] = $kr_price;          //float
-        $data['cash_rate'] = $cash_rate;        //float
-        $data['buy_amount'] = $buy_amount;      //float
-        $data['send_amount'] = $send_amount;    //float
-        $data['sell_amount'] = $sell_amount;    //float
-        $data['return_krw'] = $return_krw;      //float
-        $data['return_jpy_no_fee'] = $return_jpy_no_fee;    //float
-        $data['input_jp'] = $input_jp;          //float
-        $data['return_jpy'] = $return_jpy;      //float
-        $data['gap'] = $gap;                    //float
-        $data['rate'] = $rate;                  //float
-        return $data;
-    }
-
 }

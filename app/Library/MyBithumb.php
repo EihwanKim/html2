@@ -58,9 +58,13 @@ class MyBithumb extends bithumb
         }
     }
 
-    public function fetch_orders ($coin_type, $params = array ()) {
+    public function fetch_orders ($symbol = null, $since = null, $limit = null, $params = array ()) {
+
+        $this->load_markets();
+        $market = $this->market ($symbol);
+
         $order = [
-            'currency' => $coin_type
+            'currency' => $market['id']
         ];
         return $this->privatePostInfoOrders(array_merge ($order, $params));
     }

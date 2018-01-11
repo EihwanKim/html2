@@ -72,7 +72,7 @@ class Utils
         $log->save();
 
         $hour = $date->hour;
-        if (!($hour > $no_notify_from || $hour < $no_notify_to)) {
+        if (!($hour >= $no_notify_from || $hour <= $no_notify_to)) {
             $response = $bot->pushMessage(env('MY_TOKEN_LINE'), $textMessageBuilder);
         }
 
