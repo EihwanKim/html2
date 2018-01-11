@@ -54,10 +54,7 @@ class Buy extends Command
         try {
             $coin_master = CoinMaster::all()->where('buy_flag', true);
 
-            $this->coincheck = new MyCoincheck([
-                'apiKey' => env('API_KEY_COINCHECK'),
-                'secret' => env('API_SECRET_COINCHECK'),
-            ]);
+            $this->coincheck = new MyCoincheck();
 
             //古い注文はすべて削除
             $data = $this->coincheck->get_orders();

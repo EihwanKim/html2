@@ -54,10 +54,7 @@ class Send extends Command
 
         try  {
 
-            $this->coincheck = new MyCoincheck([
-                'apiKey' => env('API_KEY_COINCHECK'),
-                'secret' => env('API_SECRET_COINCHECK'),
-            ]);
+            $this->coincheck = new MyCoincheck();
 
             $balances = $this->coincheck->fetch_balance();
 

@@ -53,10 +53,7 @@ class Sell extends Command
 
         try  {
 
-            $this->bithumb = new MyBithumb([
-                'apiKey' => env('API_KEY_BITHUMB'),
-                'secret' => env('API_SECRET_BITHUMB'),
-            ]);
+            $this->bithumb = new MyBithumb();
 
             $balances = $this->bithumb->fetch_balance();
 

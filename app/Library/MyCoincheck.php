@@ -13,6 +13,18 @@ use ccxt\coincheck;
 class MyCoincheck extends coincheck
 {
 
+    public function __construct(array $options = array())
+    {
+        if (!$options) {
+            parent::__construct([
+                'apiKey' => env('API_KEY_COINCHECK'),
+                'secret' => env('API_SECRET_COINCHECK'),
+            ]);
+        } else {
+            parent::__construct($options);
+        }
+    }
+
     public function get_rate ($symbol, $params = array ()) {
 
         $ticker = $this->publicGetRatePair (array_merge (array (

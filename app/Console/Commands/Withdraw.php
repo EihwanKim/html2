@@ -47,10 +47,7 @@ class Withdraw extends Command
 
         try {
 
-            $this->bithumb = new MyBithumb([
-                'apiKey' => env('API_KEY_BITHUMB'),
-                'secret' => env('API_SECRET_BITHUMB'),
-            ]);
+            $this->bithumb = new MyBithumb();
 
             $config_withdraw_amount = Configs::whereName('withdraw_amount')->first();
 

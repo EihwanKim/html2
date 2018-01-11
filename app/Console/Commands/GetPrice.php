@@ -51,17 +51,11 @@ class GetPrice extends Command
             foreach ($coin_master as $coin) {
                 $coin_type = $coin->coin_type;
 
-                $coincheck = new MyCoincheck([
-                    'apiKey' => env('API_KEY_COINCHECK'),
-                    'secret' => env('API_SECRET_COINCHECK'),
-                ]);
+                $coincheck = new MyCoincheck();
                 $coincheck_res = $coincheck->get_rate("{$coin_type}_JPY");
                 $jp_price = $coincheck_res['close'];
 
-                $bithumb = new MyBithumb([
-                    'apiKey' => env('API_KEY_BITHUMB'),
-                    'secret' => env('API_SECRET_BITHUMB'),
-                ]);
+                $bithumb = new MyBithumb();
                 $bithumb_res = $bithumb->fetch_ticker("{$coin_type}/KRW");
                 $kr_price = $bithumb_res['close'];
 

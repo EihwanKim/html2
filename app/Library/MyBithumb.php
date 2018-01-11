@@ -13,6 +13,18 @@ use ccxt\bithumb;
 class MyBithumb extends bithumb
 {
 
+    public function __construct(array $options = array())
+    {
+        if (!$options) {
+            parent::__construct([
+                'apiKey' => env('API_KEY_BITHUMB'),
+                'secret' => env('API_SECRET_BITHUMB'),
+            ]);
+        } else {
+            parent::__construct($options);
+        }
+    }
+
     public function create_order ($symbol, $type, $side, $amount, $price = null, $params = array ()) {
 
         if (!$symbol)
