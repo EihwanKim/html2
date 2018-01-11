@@ -14,6 +14,7 @@ class TestController extends Controller
 
         $bitbank = new MyBitbank();
 //        $bitbank = new MyBithumb();
-        dd($bitbank->fetch_balance());
+//        dd($bitbank->fetch_balance());
+        dd($bitbank->create_order('','','',''));
     }
 }

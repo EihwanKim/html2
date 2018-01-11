@@ -85,38 +85,22 @@ class MyBitbank extends Exchange
         $url = $this->urls['api'][$api] . $endpoint;
         $query = $this->omit ($params, $this->extract_params($path));
 
-//        $url .= '?' . $this->urlencode ($query);
-
         $this->check_required_credentials();
-//        $body = $this->urlencode (array_merge (array (
-//            'endpoint' => $endpoint,
-//        ), $query));
         $nonce = (string) $this->nonce ();
-//        $auth = $endpoint . "\0" . $body . "\0" . $nonce;
+
         //- GETの場合: 「ACCESS-NONCE、リクエストのパス、クエリパラメータ」 を連結させたもの
         //- POSTの場合: 「ACCESS-NONCE、リクエストボディのJson文字列」 を連結させたもの
-//dd($path);    "user/assets"
-//dd($api);       "private"
-//dd($method);      "GET"
-//dd($params);      []
-//dd($headers);     null
-//dd($body);          "endpoint=%2Fuser%2Fassets"
-//dd($endpoint);      "/user/assets"
-//dd($url);           "https://api.bitbank.cc/v1/user/assets"
-//dd($query);            //[]
-//dd($nonce);             "1515664269"
-//dd($this->version);
         if ($method === 'GET') {
+            $url .= '?' . $this->urlencode ($query);
             $path = '/'.$this->version.'/'.$path;
             $message = $nonce . $path . $this->urlencode($query);
         } else {
-            $message = $nonce . $body;
+            $message = $nonce . $this->json($body);
+            $body = $params;
         }
-//        dd($message);
 
         $signature = $this->hmac ($message, $this->secret);
         $headers = array (
-//            'Content-Type' => 'application/json',
             'ACCESS-KEY' => $this->apiKey,
             'ACCESS-NONCE' => $nonce,
             'ACCESS-SIGNATURE' => $signature,
@@ -125,9 +109,9 @@ class MyBitbank extends Exchange
         return array ( 'url' => $url, 'method' => $method, 'body' => $body, 'headers' => $headers );
     }
 
-//    public static function encode ($input) {
-//        return self::urlencode($input);
-//    }
+    public function nonce() {
+        return microtime(true) * 10000;
+    }
 
     public function fetch_markets () {
 
@@ -194,5 +178,17 @@ dd($response);
             $result[$currency] = $account;
         }
         return $this->parse_balance($result);
+    }
+
+    public function create_order ($symbol, $type, $side, $amount, $price = null, $params = array ()) {
+
+        $order = [
+            'pair' => 'xrp_jpy',
+            'amount' => '1',
+            'price' => '20',
+            'side' => 'buy',        // buy  sell
+            'type' => 'limit',      // limit 指値、market 成行
+        ];
+        return $response = $this->privatePostUserSpotOrder (array_merge ($order, $params));
     }
 }
