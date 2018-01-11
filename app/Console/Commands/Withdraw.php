@@ -70,7 +70,7 @@ class Withdraw extends Command
 
     private function creatr_withdraw_order($amount) {
 
-        $order = $this->bithumb->withdraw_krw(env('WITHDRAW_BANK_CODE'), env('WITHDRAW_BANK_ACCOUNT_NO'), $amount);
+        $order = $this->bithumb->withdraw_krw(env('WITHDRAW_BANK_CODE_BITHUMB'), env('WITHDRAW_BANK_ACCOUNT_NO_BITHUMB'), $amount);
         $text = \GuzzleHttp\json_encode($order);
         Utils::send_line(__CLASS__ . "\n" . $text);
     }
