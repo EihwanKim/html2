@@ -30,6 +30,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+
+        $schedule->command()->hourly('command:delete_old_trails');
         $schedule->command('command:get_price')
             ->everyMinute();
         if (env('APP_ENV') == 'production') {
